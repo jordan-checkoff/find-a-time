@@ -5,8 +5,10 @@ import { viewEventApi } from "../apiCalls";
 
 interface Event {
     id: string,
-    start_datetime: number,
-    end_datetime: number,
+    start_date: string,
+    end_date: string,
+    start_time: string,
+    end_time: string,
     title: string,
     availability: Map<string, Array<number>>
 }
@@ -32,10 +34,11 @@ export default function ViewEvent() {
     if (eventData) {
         return (
             <div>
-                <p>{eventData.id}</p>
-                <p>{eventData.start_datetime}</p>
-                <p>{eventData.end_datetime}</p>
-                <p>{eventData.title}</p>
+                <h1>{eventData.title}</h1>
+                <p>Start time: {eventData.start_time}</p>
+                <p>End time: {eventData.end_time}</p>
+                <p>Start date: {eventData.start_date}</p>
+                <p>End date: {eventData.end_date}</p>
             </div>
         )
     } else {

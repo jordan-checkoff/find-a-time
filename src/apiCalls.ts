@@ -1,11 +1,14 @@
 
 const endpoint = "https://mcyvefz876.execute-api.us-east-2.amazonaws.com/prod/";
 
-export async function createEventApi(title: string, start_datetime: number, end_datetime: number) {
+export async function createEventApi(title: string, start_date: string, end_date: string, start_time: string, end_time: string) {
     const event = {
         title,
-        start_datetime,
-        end_datetime
+        start_date,
+        end_date,
+        start_time,
+        end_time,
+        offset: new Date().getTimezoneOffset()
     }
 
     let output = null
@@ -31,7 +34,7 @@ export async function viewEventApi(id: string) {
 
     let output = null;
 
-    await fetch(endpoint + id).then(async res => {
+    await fetch(endpoint + id + "?offset=" + new Date().getTimezoneOffset()).then(async res => {
         output = await res.json()
     }).catch(e => {
         console.log(e)
