@@ -2,16 +2,21 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import '../App.css';
 import { createEventApi } from '../apiCalls';
+import { useNavigate } from 'react-router-dom';
 
 function CreateEvent() {
+  const navigate = useNavigate()
 
   const [title, setTitle] = useState<string>("")
   const [start, setStart] = useState<string>("")
   const [end, setEnd] = useState<string>("")
 
-  function callCreateEventApi() {
+  async function callCreateEventApi() {
     if (title && start && end) {
-      createEventApi(title, parseInt(start), parseInt(end))
+      const res = await createEventApi(title, parseInt(start), parseInt(end))
+      if (res) {
+        navigate("event/" + res["id"])
+      }
     } else {
       console.log('a')
     }
