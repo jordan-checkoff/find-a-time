@@ -1,23 +1,18 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { viewEventApi } from "../apiCalls";
-
-
-interface Event {
-    id: string,
-    start_date: string,
-    end_date: string,
-    start_time: string,
-    end_time: string,
-    title: string,
-    availability: Map<string, Array<number>>
-}
+import Calendar from "../components/Calendar";
+import { Event } from "../interfaces";
 
 export default function ViewEvent() {
 
     const { id } = useParams()
 
     const [eventData, setEventData] = useState<Event>()
+    const [edit, setEdit] = useState<boolean>(false)
+    const [user, setUser] = useState<string>("")
+    const [userField, setUserField] = useState<string>("")
+    const [newAvailability, setNewAvailability] = useState<Set<string>>(new Set())
 
     useEffect(() => {
         const callViewEventApi = async () => {
@@ -35,13 +30,21 @@ export default function ViewEvent() {
         return (
             <div>
                 <h1>{eventData.title}</h1>
-                <p>Start time: {eventData.start_time}</p>
-                <p>End time: {eventData.end_time}</p>
-                <p>Start date: {eventData.start_date}</p>
-                <p>End date: {eventData.end_date}</p>
+                <Calendar data={eventData} />
+                {user
+                    ? <div>
+                        <p>User: {user}</p>
+                        <button onClick={() => setUser("")}>Sign out</button>
+                    </div>
+                    : <div>
+                        <p>Enter your username to set your availability</p>
+                        <input value={userField} onChange={e => setUserField(e.target.value)} />
+                        <button onClick={() => setUser(userField)}>Log in</button>
+                    </div>
+                }
             </div>
         )
     } else {
-        return <p>Loading</p>
+        return <p>Loading...</p>
     }
 }
