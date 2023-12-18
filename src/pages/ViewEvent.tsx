@@ -3,16 +3,16 @@ import { useParams } from "react-router-dom";
 import { viewEventApi } from "../apiCalls";
 import Calendar from "../components/Calendar";
 import { Event } from "../interfaces";
+import ViewCalendar from "../components/ViewCalendar";
+import EditCalendar from "../components/EditCalendar";
 
 export default function ViewEvent() {
 
     const { id } = useParams()
 
     const [eventData, setEventData] = useState<Event>()
-    const [edit, setEdit] = useState<boolean>(false)
     const [user, setUser] = useState<string>("")
     const [userField, setUserField] = useState<string>("")
-    const [newAvailability, setNewAvailability] = useState<Set<string>>(new Set())
 
     useEffect(() => {
         const callViewEventApi = async () => {
@@ -30,10 +30,11 @@ export default function ViewEvent() {
         return (
             <div>
                 <h1>{eventData.title}</h1>
-                <Calendar data={eventData} />
+                <ViewCalendar data={eventData} />
                 {user
                     ? <div>
                         <p>User: {user}</p>
+                        <EditCalendar data={eventData} user={user} setData={setEventData}  />
                         <button onClick={() => setUser("")}>Sign out</button>
                     </div>
                     : <div>

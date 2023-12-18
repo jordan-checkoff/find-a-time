@@ -34,10 +34,21 @@ export async function createEventApi(title: string, start_date: string, end_date
 export async function viewEventApi(id: string) {
 
     const res = await fetch(endpoint + id).then(async res => {
-        const output: Event = await res.json()
-        output.availability_by_user = new Map(Object.entries(output.availability_by_user))
-        output.availability_by_time = new Map(Object.entries(output.availability_by_time))
-        return output
+        const output = await res.json()
+
+        const user_map = new Map()
+        Object.keys(output.availability_by_user).forEach(key => {
+            user_map.set(key, new Set(output.availability_by_user[key]))
+        })
+        output.availability_by_user = user_map
+
+        const time_map = new Map()
+        Object.keys(output.availability_by_time).forEach(key => {
+            time_map.set(key, new Set(output.availability_by_time[key]))
+        })
+        output.availability_by_time = time_map
+
+        return output as Event
     }).catch(e => {
         console.log(e)
         return null;
