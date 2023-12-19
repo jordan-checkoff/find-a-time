@@ -57,3 +57,26 @@ export async function viewEventApi(id: string) {
     return res
 
 }
+
+export async function updateAvailability(id: string, user: string, availability: Set<string>) {
+    const update = {
+        user,
+        availability: Array.from(availability)
+    }
+
+    const res = await fetch(endpoint + id, {
+        method: "PUT",
+        body: JSON.stringify(update),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then(async res => {
+        const output = await res.text()
+        return output
+    }).catch(e => {
+        console.log(e)
+        return null;
+    });
+
+    return res
+}

@@ -1,6 +1,7 @@
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { Event } from "../interfaces";
 import Calendar from "./Calendar";
+import { updateAvailability } from "../apiCalls";
 
 interface props {
     data: Event,
@@ -18,12 +19,18 @@ export default function EditCalendar({data, user, setData} : props) {
 
     function EditCell({datetime} : datetime) {
 
-        function handleChange(e: ChangeEvent<HTMLInputElement>) {
+        async function handleChange(e: ChangeEvent<HTMLInputElement>) {
             const dupe = {...data}
             if (e.target.checked) {
                 dupe.availability_by_time.get(datetime)?.add(user)
+                dupe.availability_by_user.get(user)?.add(datetime)
             } else {
                 dupe.availability_by_time.get(datetime)?.delete(user)
+                dupe.availability_by_user.get(user)?.delete(datetime)
+            }
+            const x = dupe.availability_by_user.get(user)
+            if (x) {
+                await updateAvailability(data.id, user, x)
             }
             setData(dupe)
         }

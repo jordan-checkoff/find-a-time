@@ -26,6 +26,14 @@ export default function ViewEvent() {
         callViewEventApi()
     }, [id])
 
+    function login() {
+        setUser(userField)
+        if (!eventData?.availability_by_user.has(userField)) {
+            const dupe = {...eventData}
+            dupe.availability_by_user?.set(userField, new Set())
+        }
+    }
+
     if (eventData) {
         return (
             <div>
@@ -40,7 +48,7 @@ export default function ViewEvent() {
                     : <div>
                         <p>Enter your username to set your availability</p>
                         <input value={userField} onChange={e => setUserField(e.target.value)} />
-                        <button onClick={() => setUser(userField)}>Log in</button>
+                        <button onClick={login}>Log in</button>
                     </div>
                 }
             </div>
