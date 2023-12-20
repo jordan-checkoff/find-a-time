@@ -3,55 +3,106 @@ import logo from './logo.svg';
 import '../App.css';
 import { createEventApi } from '../apiCalls';
 import { useNavigate } from 'react-router-dom';
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, Controller, SubmitHandler } from "react-hook-form"
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { TextField, Button } from '@mui/material';
 
 function CreateEvent() {
   const navigate = useNavigate()
 
   interface FormData {
     title: string
-    startdate: string,
-    enddate: string,
-    starttime: string,
-    endtime: string
+    startdate: DateData | null,
+    enddate: DateData | null,
+    starttime: DateData | null,
+    endtime: DateData | null
   }
 
-  const { register, handleSubmit } = useForm<FormData>()
+  interface DateData {
+    $D: number,
+    $H: number,
+    $L: string,
+    $M: number,
+    $W: number,
+    $d: Date,
+    $isDayjsObject: boolean,
+    $m: number,
+    $ms: number,
+    $s: number,
+    $u: any,
+    $x: any,
+    $y: number,
+  }
+
+  const { control, handleSubmit } = useForm<FormData>({
+    defaultValues: {
+      title: "",
+      startdate: null,
+      enddate: null,
+      starttime: null,
+      endtime: null
+    },
+  })
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-      const res = await createEventApi(data.title, data.startdate, data.enddate, data.starttime, data.endtime)
+    const title = data.title
+    const startdate = data.startdate?.$d
+    const enddate = data.enddate?.$d
+    const starttime = data.starttime?.$d
+    const endtime = data.endtime?.$d
+
+    if (title && startdate && starttime && enddate && endtime) {
+      startdate.setHours(starttime.getHours())
+      startdate.setMinutes(starttime.getMinutes())
+
+      enddate.setHours(endtime.getHours())
+      enddate.setMinutes(endtime.getMinutes())
+
+      const res = await createEventApi(title, startdate.toISOString(), enddate.toISOString())
       if (res) {
         navigate("event/" + res["id"])
       } else {
         console.log('error')
       }
+
     }
+  }
 
   return (
     <div className="App">
       <h1>Find A Time</h1>
       <p>Create a new event.</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label>Title</label>
-          <input {...register("title", {required: true})} />
-        </div>
-        <div>
-          <label>Start date</label>
-          <input {...register("startdate", {required: true})} type="date" />
-        </div>
-        <div>
-          <label>End date</label>
-          <input {...register("enddate", {required: true})} type="date" />
-        </div>
-        <div>
-          <label>Start time</label>
-          <input {...register("starttime", {required: true})} type="time" />
-        </div>
-        <div>
-          <label>End time</label>
-          <input {...register("endtime", {required: true})} type="time" />
-        </div>
-        <input type="submit" />
+        <Controller
+          name="title"
+          control={control}
+          render={({ field }) => <TextField {...field} />}
+          rules={{required: true}}
+        />
+        <Controller
+          name="startdate"
+          control={control}
+          render={({ field }) => <DatePicker {...field} />}
+          rules={{required: true}}
+        />
+        <Controller
+          name="enddate"
+          control={control}
+          render={({ field }) => <DatePicker {...field} />}
+          rules={{required: true}}
+        />
+        <Controller
+          name="starttime"
+          control={control}
+          render={({ field }) => <TimePicker {...field} />}
+          rules={{required: true}}
+        />
+        <Controller
+          name="endtime"
+          control={control}
+          render={({ field }) => <TimePicker {...field} />}
+          rules={{required: true}}
+        />
+        <Button variant="contained" type="submit">Submit</Button>
       </form>
     </div>
   );

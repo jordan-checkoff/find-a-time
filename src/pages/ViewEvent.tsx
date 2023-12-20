@@ -5,7 +5,8 @@ import Calendar from "../components/Calendar";
 import { Event } from "../interfaces";
 import ViewCalendar from "../components/ViewCalendar";
 import EditCalendar from "../components/EditCalendar";
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, Controller, SubmitHandler } from "react-hook-form"
+import { TextField, Button } from "@mui/material";
 
 interface FormData {
     user: string
@@ -18,7 +19,10 @@ export default function ViewEvent() {
     const [eventData, setEventData] = useState<Event>()
     const [user, setUser] = useState<string>("")
 
-    const { register, handleSubmit } = useForm<FormData>()
+    const { control, handleSubmit } = useForm<FormData>({defaultValues: {
+        user: ""
+      },
+    })
 
     useEffect(() => {
         const callViewEventApi = async () => {
@@ -54,8 +58,13 @@ export default function ViewEvent() {
                     : <div>
                         <p>Enter your username to set your availability</p>
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <input {...register("user")} />
-                            <input type="submit" />
+                            <Controller
+                                name="user"
+                                control={control}
+                                render={({ field }) => <TextField {...field} />}
+                                rules={{required: true}}
+                            />
+                            <Button variant="contained" type="submit">Submit</Button>
                         </form>
                     </div>
                 }

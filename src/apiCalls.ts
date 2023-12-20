@@ -3,31 +3,27 @@ import { Event } from "./interfaces";
 
 const endpoint = "https://mcyvefz876.execute-api.us-east-2.amazonaws.com/prod/";
 
-export async function createEventApi(title: string, start_date: string, end_date: string, start_time: string, end_time: string) {
+export async function createEventApi(title: string, start_date: string, end_date: string) {
     const event = {
         title,
         start_date,
         end_date,
-        start_time,
-        end_time,
     }
 
-    let output = null
-
-    await fetch(endpoint, {
+    const res = await fetch(endpoint, {
         method: "POST",
         body: JSON.stringify(event),
         headers: {
             "Content-Type": "application/json",
         },
     }).then(async res => {
-        output = await res.json()
+        return await res.json()
     }).catch(e => {
         console.log(e)
         return null;
     });
 
-    return output
+    return res
 }
 
 
