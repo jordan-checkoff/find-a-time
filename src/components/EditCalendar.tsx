@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Event } from "../interfaces";
 import Calendar from "./Calendar";
 import { updateAvailability } from "../apiCalls";
@@ -17,6 +17,13 @@ interface datetime {
 
 export default function EditCalendar({data, user, setData} : props) {
 
+    useEffect(() => {
+        const x = data.availability_by_user.get(user)
+        if (x) {
+            updateAvailability(data.id, user, x)
+        }
+    }, [data])
+
     function EditCell({datetime} : datetime) {
 
         async function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -27,10 +34,6 @@ export default function EditCalendar({data, user, setData} : props) {
             } else {
                 dupe.availability_by_time.get(datetime)?.delete(user)
                 dupe.availability_by_user.get(user)?.delete(datetime)
-            }
-            const x = dupe.availability_by_user.get(user)
-            if (x) {
-                await updateAvailability(data.id, user, x)
             }
             setData(dupe)
         }
