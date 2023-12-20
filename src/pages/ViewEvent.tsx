@@ -5,6 +5,11 @@ import Calendar from "../components/Calendar";
 import { Event } from "../interfaces";
 import ViewCalendar from "../components/ViewCalendar";
 import EditCalendar from "../components/EditCalendar";
+import { useForm, SubmitHandler } from "react-hook-form"
+
+interface FormData {
+    user: string
+}
 
 export default function ViewEvent() {
 
@@ -12,7 +17,8 @@ export default function ViewEvent() {
 
     const [eventData, setEventData] = useState<Event>()
     const [user, setUser] = useState<string>("")
-    const [userField, setUserField] = useState<string>("")
+
+    const { register, handleSubmit } = useForm<FormData>()
 
     useEffect(() => {
         const callViewEventApi = async () => {
@@ -26,11 +32,11 @@ export default function ViewEvent() {
         callViewEventApi()
     }, [id])
 
-    function login() {
-        setUser(userField)
-        if (!eventData?.availability_by_user.has(userField)) {
+    const onSubmit: SubmitHandler<FormData> = (data) => {
+        setUser(data.user)
+        if (!eventData?.availability_by_user.has(data.user)) {
             const dupe = {...eventData}
-            dupe.availability_by_user?.set(userField, new Set())
+            dupe.availability_by_user?.set(data.user, new Set())
         }
     }
 
@@ -47,8 +53,10 @@ export default function ViewEvent() {
                     </div>
                     : <div>
                         <p>Enter your username to set your availability</p>
-                        <input value={userField} onChange={e => setUserField(e.target.value)} />
-                        <button onClick={login}>Log in</button>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <input {...register("user")} />
+                            <input type="submit" />
+                        </form>
                     </div>
                 }
             </div>
