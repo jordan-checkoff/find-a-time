@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs";
 import { Event } from "../interfaces";
 import Calendar from "./Calendar";
 
@@ -6,7 +7,7 @@ interface props {
 }
 
 interface datetime {
-    datetime: Date
+    datetime: Dayjs
 }
 
 

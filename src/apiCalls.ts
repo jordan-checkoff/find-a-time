@@ -1,5 +1,9 @@
 
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
 import { Event } from "./interfaces";
+
+dayjs.extend(utc)
 
 const endpoint = "https://mcyvefz876.execute-api.us-east-2.amazonaws.com/prod/";
 
@@ -32,7 +36,7 @@ export async function viewEventApi(id: string) {
     const res = await fetch(endpoint + id).then(async res => {
         const output = await res.json()
 
-        output.start_times = output.start_times.map((t: string) => new Date(t))
+        output.start_times = output.start_times.map((t: number) => dayjs.utc(t).local())
 
         // const user_map = new Map()
         // Object.keys(output.availability_by_user).forEach(key => {

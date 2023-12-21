@@ -2,6 +2,7 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "reac
 import { Event } from "../interfaces";
 import Calendar from "./Calendar";
 import { updateAvailability } from "../apiCalls";
+import { Dayjs } from "dayjs";
 
 interface props {
     data: Event,
@@ -10,7 +11,7 @@ interface props {
 }
 
 interface datetime {
-    datetime: Date
+    datetime: Dayjs
 }
 
 

@@ -3,187 +3,548 @@ import { ComponentType, ReactElement, useState } from "react"
 import { Event } from "../interfaces"
 import { SetStateAction, Dispatch } from "react"
 import { start } from "repl"
+import dayjs, { Dayjs } from "dayjs"
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import { FormControl, Select, MenuItem, InputLabel } from "@mui/material"
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface props {
-    start_times: Array<Date>,
+    start_times: Array<Dayjs>,
     num_blocks: number,
     Cell: ComponentType<datetime>
 }
 
 interface datetime {
-    datetime: Date
+    datetime: Dayjs
 }
 
 export default function Calendar({start_times, num_blocks, Cell}: props) {
 
-    let i = 0
-    // const ogDate = start_times[0].toLocaleDateString().split("/")[1]
-    const starting_block = 2 * start_times[0].getUTCHours() + 2 * start_times[0].getUTCMinutes() / 30
-    const bottom_blocks = num_blocks + starting_block > 47 ? 48 - starting_block : num_blocks 
-    const top_blocks = num_blocks - bottom_blocks
+    const [timezone, setTimezone] = useState(dayjs.tz.guess())
 
+    const timezones = [
+        "Africa/Abidjan",
+        "Africa/Accra",
+        "Africa/Addis_Ababa",
+        "Africa/Algiers",
+        "Africa/Asmera",
+        "Africa/Bamako",
+        "Africa/Bangui",
+        "Africa/Banjul",
+        "Africa/Bissau",
+        "Africa/Blantyre",
+        "Africa/Brazzaville",
+        "Africa/Bujumbura",
+        "Africa/Cairo",
+        "Africa/Casablanca",
+        "Africa/Ceuta",
+        "Africa/Conakry",
+        "Africa/Dakar",
+        "Africa/Dar_es_Salaam",
+        "Africa/Djibouti",
+        "Africa/Douala",
+        "Africa/El_Aaiun",
+        "Africa/Freetown",
+        "Africa/Gaborone",
+        "Africa/Harare",
+        "Africa/Johannesburg",
+        "Africa/Juba",
+        "Africa/Kampala",
+        "Africa/Khartoum",
+        "Africa/Kigali",
+        "Africa/Kinshasa",
+        "Africa/Lagos",
+        "Africa/Libreville",
+        "Africa/Lome",
+        "Africa/Luanda",
+        "Africa/Lubumbashi",
+        "Africa/Lusaka",
+        "Africa/Malabo",
+        "Africa/Maputo",
+        "Africa/Maseru",
+        "Africa/Mbabane",
+        "Africa/Mogadishu",
+        "Africa/Monrovia",
+        "Africa/Nairobi",
+        "Africa/Ndjamena",
+        "Africa/Niamey",
+        "Africa/Nouakchott",
+        "Africa/Ouagadougou",
+        "Africa/Porto-Novo",
+        "Africa/Sao_Tome",
+        "Africa/Tripoli",
+        "Africa/Tunis",
+        "Africa/Windhoek",
+        "America/Adak",
+        "America/Anchorage",
+        "America/Anguilla",
+        "America/Antigua",
+        "America/Araguaina",
+        "America/Argentina/La_Rioja",
+        "America/Argentina/Rio_Gallegos",
+        "America/Argentina/Salta",
+        "America/Argentina/San_Juan",
+        "America/Argentina/San_Luis",
+        "America/Argentina/Tucuman",
+        "America/Argentina/Ushuaia",
+        "America/Aruba",
+        "America/Asuncion",
+        "America/Bahia",
+        "America/Bahia_Banderas",
+        "America/Barbados",
+        "America/Belem",
+        "America/Belize",
+        "America/Blanc-Sablon",
+        "America/Boa_Vista",
+        "America/Bogota",
+        "America/Boise",
+        "America/Buenos_Aires",
+        "America/Cambridge_Bay",
+        "America/Campo_Grande",
+        "America/Cancun",
+        "America/Caracas",
+        "America/Catamarca",
+        "America/Cayenne",
+        "America/Cayman",
+        "America/Chicago",
+        "America/Chihuahua",
+        "America/Ciudad_Juarez",
+        "America/Coral_Harbour",
+        "America/Cordoba",
+        "America/Costa_Rica",
+        "America/Creston",
+        "America/Cuiaba",
+        "America/Curacao",
+        "America/Danmarkshavn",
+        "America/Dawson",
+        "America/Dawson_Creek",
+        "America/Denver",
+        "America/Detroit",
+        "America/Dominica",
+        "America/Edmonton",
+        "America/Eirunepe",
+        "America/El_Salvador",
+        "America/Fort_Nelson",
+        "America/Fortaleza",
+        "America/Glace_Bay",
+        "America/Godthab",
+        "America/Goose_Bay",
+        "America/Grand_Turk",
+        "America/Grenada",
+        "America/Guadeloupe",
+        "America/Guatemala",
+        "America/Guayaquil",
+        "America/Guyana",
+        "America/Halifax",
+        "America/Havana",
+        "America/Hermosillo",
+        "America/Indiana/Knox",
+        "America/Indiana/Marengo",
+        "America/Indiana/Petersburg",
+        "America/Indiana/Tell_City",
+        "America/Indiana/Vevay",
+        "America/Indiana/Vincennes",
+        "America/Indiana/Winamac",
+        "America/Indianapolis",
+        "America/Inuvik",
+        "America/Iqaluit",
+        "America/Jamaica",
+        "America/Jujuy",
+        "America/Juneau",
+        "America/Kentucky/Monticello",
+        "America/Kralendijk",
+        "America/La_Paz",
+        "America/Lima",
+        "America/Los_Angeles",
+        "America/Louisville",
+        "America/Lower_Princes",
+        "America/Maceio",
+        "America/Managua",
+        "America/Manaus",
+        "America/Marigot",
+        "America/Martinique",
+        "America/Matamoros",
+        "America/Mazatlan",
+        "America/Mendoza",
+        "America/Menominee",
+        "America/Merida",
+        "America/Metlakatla",
+        "America/Mexico_City",
+        "America/Miquelon",
+        "America/Moncton",
+        "America/Monterrey",
+        "America/Montevideo",
+        "America/Montserrat",
+        "America/Nassau",
+        "America/New_York",
+        "America/Nipigon",
+        "America/Nome",
+        "America/Noronha",
+        "America/North_Dakota/Beulah",
+        "America/North_Dakota/Center",
+        "America/North_Dakota/New_Salem",
+        "America/Ojinaga",
+        "America/Panama",
+        "America/Pangnirtung",
+        "America/Paramaribo",
+        "America/Phoenix",
+        "America/Port-au-Prince",
+        "America/Port_of_Spain",
+        "America/Porto_Velho",
+        "America/Puerto_Rico",
+        "America/Punta_Arenas",
+        "America/Rainy_River",
+        "America/Rankin_Inlet",
+        "America/Recife",
+        "America/Regina",
+        "America/Resolute",
+        "America/Rio_Branco",
+        "America/Santa_Isabel",
+        "America/Santarem",
+        "America/Santiago",
+        "America/Santo_Domingo",
+        "America/Sao_Paulo",
+        "America/Scoresbysund",
+        "America/Sitka",
+        "America/St_Barthelemy",
+        "America/St_Johns",
+        "America/St_Kitts",
+        "America/St_Lucia",
+        "America/St_Thomas",
+        "America/St_Vincent",
+        "America/Swift_Current",
+        "America/Tegucigalpa",
+        "America/Thule",
+        "America/Thunder_Bay",
+        "America/Tijuana",
+        "America/Toronto",
+        "America/Tortola",
+        "America/Vancouver",
+        "America/Whitehorse",
+        "America/Winnipeg",
+        "America/Yakutat",
+        "America/Yellowknife",
+        "Antarctica/Casey",
+        "Antarctica/Davis",
+        "Antarctica/DumontDUrville",
+        "Antarctica/Macquarie",
+        "Antarctica/Mawson",
+        "Antarctica/McMurdo",
+        "Antarctica/Palmer",
+        "Antarctica/Rothera",
+        "Antarctica/Syowa",
+        "Antarctica/Troll",
+        "Antarctica/Vostok",
+        "Arctic/Longyearbyen",
+        "Asia/Aden",
+        "Asia/Almaty",
+        "Asia/Amman",
+        "Asia/Anadyr",
+        "Asia/Aqtau",
+        "Asia/Aqtobe",
+        "Asia/Ashgabat",
+        "Asia/Atyrau",
+        "Asia/Baghdad",
+        "Asia/Bahrain",
+        "Asia/Baku",
+        "Asia/Bangkok",
+        "Asia/Barnaul",
+        "Asia/Beirut",
+        "Asia/Bishkek",
+        "Asia/Brunei",
+        "Asia/Calcutta",
+        "Asia/Chita",
+        "Asia/Choibalsan",
+        "Asia/Colombo",
+        "Asia/Damascus",
+        "Asia/Dhaka",
+        "Asia/Dili",
+        "Asia/Dubai",
+        "Asia/Dushanbe",
+        "Asia/Famagusta",
+        "Asia/Gaza",
+        "Asia/Hebron",
+        "Asia/Hong_Kong",
+        "Asia/Hovd",
+        "Asia/Irkutsk",
+        "Asia/Jakarta",
+        "Asia/Jayapura",
+        "Asia/Jerusalem",
+        "Asia/Kabul",
+        "Asia/Kamchatka",
+        "Asia/Karachi",
+        "Asia/Katmandu",
+        "Asia/Khandyga",
+        "Asia/Krasnoyarsk",
+        "Asia/Kuala_Lumpur",
+        "Asia/Kuching",
+        "Asia/Kuwait",
+        "Asia/Macau",
+        "Asia/Magadan",
+        "Asia/Makassar",
+        "Asia/Manila",
+        "Asia/Muscat",
+        "Asia/Nicosia",
+        "Asia/Novokuznetsk",
+        "Asia/Novosibirsk",
+        "Asia/Omsk",
+        "Asia/Oral",
+        "Asia/Phnom_Penh",
+        "Asia/Pontianak",
+        "Asia/Pyongyang",
+        "Asia/Qatar",
+        "Asia/Qostanay",
+        "Asia/Qyzylorda",
+        "Asia/Rangoon",
+        "Asia/Riyadh",
+        "Asia/Saigon",
+        "Asia/Sakhalin",
+        "Asia/Samarkand",
+        "Asia/Seoul",
+        "Asia/Shanghai",
+        "Asia/Singapore",
+        "Asia/Srednekolymsk",
+        "Asia/Taipei",
+        "Asia/Tashkent",
+        "Asia/Tbilisi",
+        "Asia/Tehran",
+        "Asia/Thimphu",
+        "Asia/Tokyo",
+        "Asia/Tomsk",
+        "Asia/Ulaanbaatar",
+        "Asia/Urumqi",
+        "Asia/Ust-Nera",
+        "Asia/Vientiane",
+        "Asia/Vladivostok",
+        "Asia/Yakutsk",
+        "Asia/Yekaterinburg",
+        "Asia/Yerevan",
+        "Atlantic/Azores",
+        "Atlantic/Bermuda",
+        "Atlantic/Canary",
+        "Atlantic/Cape_Verde",
+        "Atlantic/Faeroe",
+        "Atlantic/Madeira",
+        "Atlantic/Reykjavik",
+        "Atlantic/South_Georgia",
+        "Atlantic/St_Helena",
+        "Atlantic/Stanley",
+        "Australia/Adelaide",
+        "Australia/Brisbane",
+        "Australia/Broken_Hill",
+        "Australia/Currie",
+        "Australia/Darwin",
+        "Australia/Eucla",
+        "Australia/Hobart",
+        "Australia/Lindeman",
+        "Australia/Lord_Howe",
+        "Australia/Melbourne",
+        "Australia/Perth",
+        "Australia/Sydney",
+        "Europe/Amsterdam",
+        "Europe/Andorra",
+        "Europe/Astrakhan",
+        "Europe/Athens",
+        "Europe/Belgrade",
+        "Europe/Berlin",
+        "Europe/Bratislava",
+        "Europe/Brussels",
+        "Europe/Bucharest",
+        "Europe/Budapest",
+        "Europe/Busingen",
+        "Europe/Chisinau",
+        "Europe/Copenhagen",
+        "Europe/Dublin",
+        "Europe/Gibraltar",
+        "Europe/Guernsey",
+        "Europe/Helsinki",
+        "Europe/Isle_of_Man",
+        "Europe/Istanbul",
+        "Europe/Jersey",
+        "Europe/Kaliningrad",
+        "Europe/Kiev",
+        "Europe/Kirov",
+        "Europe/Lisbon",
+        "Europe/Ljubljana",
+        "Europe/London",
+        "Europe/Luxembourg",
+        "Europe/Madrid",
+        "Europe/Malta",
+        "Europe/Mariehamn",
+        "Europe/Minsk",
+        "Europe/Monaco",
+        "Europe/Moscow",
+        "Europe/Oslo",
+        "Europe/Paris",
+        "Europe/Podgorica",
+        "Europe/Prague",
+        "Europe/Riga",
+        "Europe/Rome",
+        "Europe/Samara",
+        "Europe/San_Marino",
+        "Europe/Sarajevo",
+        "Europe/Saratov",
+        "Europe/Simferopol",
+        "Europe/Skopje",
+        "Europe/Sofia",
+        "Europe/Stockholm",
+        "Europe/Tallinn",
+        "Europe/Tirane",
+        "Europe/Ulyanovsk",
+        "Europe/Uzhgorod",
+        "Europe/Vaduz",
+        "Europe/Vatican",
+        "Europe/Vienna",
+        "Europe/Vilnius",
+        "Europe/Volgograd",
+        "Europe/Warsaw",
+        "Europe/Zagreb",
+        "Europe/Zaporozhye",
+        "Europe/Zurich",
+        "Indian/Antananarivo",
+        "Indian/Chagos",
+        "Indian/Christmas",
+        "Indian/Cocos",
+        "Indian/Comoro",
+        "Indian/Kerguelen",
+        "Indian/Mahe",
+        "Indian/Maldives",
+        "Indian/Mauritius",
+        "Indian/Mayotte",
+        "Indian/Reunion",
+        "Pacific/Apia",
+        "Pacific/Auckland",
+        "Pacific/Bougainville",
+        "Pacific/Chatham",
+        "Pacific/Easter",
+        "Pacific/Efate",
+        "Pacific/Enderbury",
+        "Pacific/Fakaofo",
+        "Pacific/Fiji",
+        "Pacific/Funafuti",
+        "Pacific/Galapagos",
+        "Pacific/Gambier",
+        "Pacific/Guadalcanal",
+        "Pacific/Guam",
+        "Pacific/Honolulu",
+        "Pacific/Johnston",
+        "Pacific/Kiritimati",
+        "Pacific/Kosrae",
+        "Pacific/Kwajalein",
+        "Pacific/Majuro",
+        "Pacific/Marquesas",
+        "Pacific/Midway",
+        "Pacific/Nauru",
+        "Pacific/Niue",
+        "Pacific/Norfolk",
+        "Pacific/Noumea",
+        "Pacific/Pago_Pago",
+        "Pacific/Palau",
+        "Pacific/Pitcairn",
+        "Pacific/Ponape",
+        "Pacific/Port_Moresby",
+        "Pacific/Rarotonga",
+        "Pacific/Saipan",
+        "Pacific/Tahiti",
+        "Pacific/Tarawa",
+        "Pacific/Tongatapu",
+        "Pacific/Truk",
+        "Pacific/Wake",
+        "Pacific/Wallis"
+      ]
 
-    const getTimeFromMidnight = (m: number) => {
-        const d = new Date()
-        d.setUTCHours(0, m, 0)
-        return d
-    }
+    
 
-    const getTimeFromStart = (m: number) => {
-        const d = new Date(start_times[0])
-        d.setMinutes(d.getMinutes() + m)
-        return d
-    }    
-
-    const parseTime = (d: Date) => {
-        const hours = d.getUTCHours() == 0 ? 12 : d.getUTCHours() % 12
-        const minutes = d.getUTCMinutes().toString().padStart(2, '0')
-        const x = d.getUTCHours() >= 12 ? "PM" : "AM"
-        return `${hours}:${minutes} ${x}`
-    }
-
-    const parseDate = (d: Date) => {
-        const day = d.getUTCDate()
-        const month = d.getUTCMonth() + 1
-        const year = d.getUTCFullYear().toString().slice(2)
-        return `${month}/${day}/${year}`
-    }
-
-
-    // return (
-    //     <table>
-    //         <Row start_times={start_times} time={new Date()} Cell={DateCell} label={"Time"} />
-    //         {Array.from(Array(top_blocks).keys()).map(t =>
-    //             <Row start_times={start_times} time={getTimeFromMidnight(t*30)} label={parseTime(getTimeFromMidnight(t*30))} Cell={Cell} />
-    //         )}
-    //         <tr>
-    //             <td>-----</td>
-    //         </tr>
-    //         {Array.from(Array(bottom_blocks).keys()).map(t =>
-    //             <Row start_times={start_times} time={getTimeFromStart(30*t)} label={parseTime(getTimeFromStart(30*t))} Cell={Cell} />
-    //         )}
-    //     </table>
-    // )
+    dayjs.tz.setDefault(timezone)
 
     interface DateInfo {
-        date: string
-        datetimes: (Date | null)[]
+        date: Dayjs
+        top_datetimes: (Dayjs | null)[]
+        bottom_datetimes: (Dayjs | null)[]
         connected: boolean
     }
 
     const dates: DateInfo[] = []
     for (let i=0; i < start_times.length; i++) {
-        let d = new Date(start_times[i])
-        if (dates.length > 0) {
-            if (dates[dates.length - 1].date == parseDate(d)) {
-                dates[dates.length-1].connected = true
-            } else {
-                for (let k=0; k < bottom_blocks; k++) {
-                    dates[dates.length-1].datetimes.push(null)
-                }
-                const datetimes = []
-                for (let k=0; k < top_blocks; k++) {
-                    datetimes.push(null)
-                }
-                dates.push({
-                    date: parseDate(d),
-                    datetimes: datetimes,
-                    connected: false
-                })
-            }
-        } else {
-            const datetimes = []
-            for (let k=0; k < top_blocks; k++) {
-                datetimes.push(null)
-            }
-            dates.push({
-                date: parseDate(d),
-                datetimes: datetimes,
-                connected: false
-            })
-        }
+        const bottom_datetimes = []
+        const top_datetimes = []
+        const start = start_times[i].tz(timezone).utcOffset() != 0 ? start_times[i].tz(timezone) : start_times[i].utc()
+
         for (let j=0; j < num_blocks; j++) {
-            const date = parseDate(d)
-            if (dates.length > 0 && dates[dates.length-1].date == date) {
-                dates[dates.length-1].datetimes.push(d)
+            const datetime = start.add(30*j, "minute")
+            console.log(j, start.format(), datetime.format())
+            if (datetime.isSame(start, "date")) {
+                bottom_datetimes.push(datetime)
             } else {
-                dates[dates.length-1].connected = true
-                dates.push({
-                    date: date,
-                    datetimes: [d],
-                    connected: false
-                })
+                top_datetimes.push(datetime)
             }
-            d = new Date(d.getTime() + 30 * 60 * 1000)
         }
+
+        if (dates.length == 0 || !dates[dates.length-1].date.isSame(start_times[i], "date")) {
+            dates.push({
+                date: start.startOf('day'),
+                top_datetimes: Array(top_datetimes.length).fill(null),
+                bottom_datetimes: bottom_datetimes,
+                connected: true
+            })
+        } else {
+            dates[dates.length-1].bottom_datetimes = bottom_datetimes
+            dates[dates.length-1].connected = true
+        }
+
+        dates.push({
+            date: start.add(1, "day").startOf('day'),
+            top_datetimes: top_datetimes,
+            bottom_datetimes: Array(bottom_datetimes.length).fill(null),
+            connected: false
+        })
     }
 
-    for (let k=0; k < bottom_blocks; k++) {
-        dates[dates.length-1].datetimes.push(null)
-    }
 
     return (
         <div>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={timezone}
+                    label="Age"
+                    onChange={x => setTimezone(x.target.value)}
+                >
+                    {timezones.map(t => <MenuItem value={t}>{t.replace("_", " ")}</MenuItem>)}
+                </Select>
+                </FormControl>
             {dates.map(d => {
 
                 return (
                     <div>
-                        <p>{d.date}</p>
-                        {d.datetimes.map(x => {
-
+                        <p>{d.date.format("M/D/YY")}</p>
+                        {d.top_datetimes.map(x => {
                             if (x) {
-                                return (
-                                    <p>A</p>
-                                )
-                            } else {
-                                return (
-                                    <p>B</p>
-                                )
+                                return <p>{x.format("h:mm A")}</p>
                             }
-                            
-                        })}
+
+                            return <p>B</p>
+
+                        }
+                        )}
+                        <hr />
+                        {d.bottom_datetimes.map(x => {
+                            if (x) {
+                                return <p>{x.format("h:mm A")}</p>
+                            }
+
+                            return <p>B</p>
+
+                        }
+                        )}
                     </div>
                 )
             })}
         </div>
     )
 }
-
-// interface rowProps {
-//     start_times: Array<Date>
-//     time: Date,
-//     Cell: ComponentType<datetime>,
-//     label: string
-// }
-
-// function Row({start_times, time, Cell, label}: rowProps) {
-
-//     const isOneDayApart = (d1: Date, d2: Date) => {
-//         return d1.getTime() == d2.getTime() + 24*60*60*1000
-//     }
-
-//     return (
-//         <tr>
-//             <td>{label}</td>
-//             {start_times.map((d, i) => {
-//                 if (i != 0 && !isOneDayApart(d, start_times[i-1])) {
-//                     return <td style={{marginLeft: 40, display: 'block'}}><Cell datetime={time} /></td>
-//                 } else {
-//                     return <td><Cell datetime={time} /></td>
-//                 }
-//             })}
-//         </tr>
-//     )
-// }
-
-// function DateCell({datetime}: datetime) {
-//     const parseDate = (d: Date) => {
-//         const day = d.getUTCDate()
-//         const month = d.getUTCMonth() + 1
-//         const year = d.getUTCFullYear().toString().slice(2)
-//         return `${month}/${day}/${year}`
-//     }
-
-//     return <p>{parseDate(datetime)}</p>
-
-// }
