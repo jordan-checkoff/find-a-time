@@ -51,13 +51,18 @@ function CreateEvent() {
     const endtime = data.endtime?.$d
 
     if (title && startdate && starttime && enddate && endtime) {
-      startdate.setHours(starttime.getHours())
-      startdate.setMinutes(starttime.getMinutes())
+      startdate?.setHours(starttime.getHours() + starttime.getMinutes())
+      enddate?.setHours(starttime.getHours() + starttime.getMinutes())
 
-      enddate.setHours(endtime.getHours())
-      enddate.setMinutes(endtime.getMinutes())
+      const start_times = []
+      while (startdate <= enddate) {
+        start_times.push(startdate.getTime())
+        startdate.setDate(startdate.getDate() + 1)
+      }
 
-      const res = await createEventApi(title, startdate.toISOString(), enddate.toISOString())
+      const num_blocks = Math.floor((endtime.getTime() - starttime.getTime()) / (1000*60*30))
+
+      const res = await createEventApi(title, start_times, num_blocks)
       if (res) {
         navigate("event/" + res["id"])
       } else {

@@ -10,7 +10,7 @@ interface props {
 }
 
 interface datetime {
-    datetime: string
+    datetime: Date
 }
 
 
@@ -29,25 +29,25 @@ export default function EditCalendar({data, user, setData} : props) {
         async function handleChange(e: ChangeEvent<HTMLInputElement>) {
             const dupe = {...data}
             if (e.target.checked) {
-                dupe.availability_by_time.get(datetime)?.add(user)
-                dupe.availability_by_user.get(user)?.add(datetime)
+                // dupe.availability_by_time.get(datetime)?.add(user)
+                // dupe.availability_by_user.get(user)?.add(datetime)
             } else {
-                dupe.availability_by_time.get(datetime)?.delete(user)
-                dupe.availability_by_user.get(user)?.delete(datetime)
+                // dupe.availability_by_time.get(datetime)?.delete(user)
+                // dupe.availability_by_user.get(user)?.delete(datetime)
             }
             setData(dupe)
         }
 
-        const checked = data.availability_by_time.get(datetime)?.has(user)
+        // const checked = data.availability_by_time.get(datetime)?.has(user)
     
         return (
             <div>
-                <input type="checkbox" checked={checked} onChange={handleChange} />
+                {/* <input type="checkbox" checked={checked} onChange={handleChange} /> */}
             </div>
         )
     }
 
     return (
-        <Calendar date_range={data.date_range} time_range={data.time_range} Cell={EditCell} />
+        <Calendar start_times={data.start_times} num_blocks={data.num_blocks} Cell={EditCell} />
     )
 }

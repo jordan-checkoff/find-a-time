@@ -6,7 +6,7 @@ interface props {
 }
 
 interface datetime {
-    datetime: string
+    datetime: Date
 }
 
 
@@ -15,16 +15,17 @@ export default function ViewCalendar({data} : props) {
 
 
     function AvailabilityCell({datetime} : datetime) {
-        const users = data.availability_by_time.get(datetime)
+        // const users = data.availability_by_time.get(datetime)
         
         return (
             <div>
-                {users && Array.from(users).map(x => <p>{x}</p>)}
+                {/* {users && Array.from(users).map(x => <p>{x}</p>)} */}
+                <p>A</p>
             </div>
         )
     }
 
     return (
-        <Calendar date_range={data.date_range} time_range={data.time_range} Cell={AvailabilityCell} />
+        <Calendar start_times={data.start_times} num_blocks={data.num_blocks} Cell={AvailabilityCell} />
     )
 }
