@@ -21,6 +21,13 @@ interface datetime {
     datetime: Dayjs
 }
 
+interface DateInfo {
+    date: Dayjs
+    top_datetimes: (Dayjs | null)[]
+    bottom_datetimes: (Dayjs | null)[]
+    connected: boolean
+}
+
 export default function Calendar({start_times, num_blocks, Cell}: props) {
 
     const [timezone, setTimezone] = useState(dayjs.tz.guess())
@@ -460,13 +467,6 @@ export default function Calendar({start_times, num_blocks, Cell}: props) {
 
     dayjs.tz.setDefault(timezone)
 
-    interface DateInfo {
-        date: Dayjs
-        top_datetimes: (Dayjs | null)[]
-        bottom_datetimes: (Dayjs | null)[]
-        connected: boolean
-    }
-
     const dates: DateInfo[] = []
     for (let i=0; i < start_times.length; i++) {
         const bottom_datetimes = []
@@ -475,7 +475,6 @@ export default function Calendar({start_times, num_blocks, Cell}: props) {
 
         for (let j=0; j < num_blocks; j++) {
             const datetime = start.add(30*j, "minute")
-            console.log(j, start.format(), datetime.format())
             if (datetime.isSame(start, "date")) {
                 bottom_datetimes.push(datetime)
             } else {
@@ -488,20 +487,29 @@ export default function Calendar({start_times, num_blocks, Cell}: props) {
                 date: start.startOf('day'),
                 top_datetimes: Array(top_datetimes.length).fill(null),
                 bottom_datetimes: bottom_datetimes,
-                connected: true
+                connected: false
             })
+            if (dates.length >= 2 && dates[dates.length-2].date.add(1, "day").isSame(dates[dates.length-1].date)) {
+                dates[dates.length-2].connected = true
+            }
         } else {
             dates[dates.length-1].bottom_datetimes = bottom_datetimes
             dates[dates.length-1].connected = true
         }
 
-        dates.push({
-            date: start.add(1, "day").startOf('day'),
-            top_datetimes: top_datetimes,
-            bottom_datetimes: Array(bottom_datetimes.length).fill(null),
-            connected: false
-        })
+        if (top_datetimes.length > 0) {
+            dates[dates.length-1].connected = true
+            dates.push({
+                date: start.add(1, "day").startOf('day'),
+                top_datetimes: top_datetimes,
+                bottom_datetimes: Array(bottom_datetimes.length).fill(null),
+                connected: false
+            })
+        }
     }
+
+    const bottom_datetimes = dates[0].bottom_datetimes
+    const top_datetimes = dates.length > 0 ? dates[1].top_datetimes : dates[0].top_datetimes
 
 
     return (
@@ -518,32 +526,44 @@ export default function Calendar({start_times, num_blocks, Cell}: props) {
                     {timezones.map(t => <MenuItem value={t}>{t.replace("_", " ")}</MenuItem>)}
                 </Select>
                 </FormControl>
-            {dates.map(d => {
+            <div style={{display: 'grid', gridTemplateColumns: `repeat(${dates.length + 1}, 1fr)`}}>
+                <div>
+                    <p>Time</p>
+                    {top_datetimes.map(t => <p>{t ? t.format("h:mm A") : " "}</p>)}
+                    <div style={{marginBottom: 20}} />
+                    {bottom_datetimes.map(t => <p>{t ? t.format("h:mm A") : " "}</p>)}
+                </div>
+                {dates.map(d => <Column date={d} Cell={Cell} />)}
+            </div>
+        </div>
+    )
+}
 
-                return (
-                    <div>
-                        <p>{d.date.format("M/D/YY")}</p>
-                        {d.top_datetimes.map(x => {
-                            if (x) {
-                                return <p>{x.format("h:mm A")}</p>
-                            }
 
-                            return <p>B</p>
+interface ColumnProps {
+    date: DateInfo,
+    Cell: ComponentType<datetime>
+}
 
-                        }
-                        )}
-                        <hr />
-                        {d.bottom_datetimes.map(x => {
-                            if (x) {
-                                return <p>{x.format("h:mm A")}</p>
-                            }
+function Column({date, Cell}: ColumnProps) {
 
-                            return <p>B</p>
-
-                        }
-                        )}
-                    </div>
-                )
+    return (
+        <div style={{marginRight: date.connected ? 0 : 100}}>
+            <p>{date.date.format("M/D/YY")}</p>
+            {date.top_datetimes.map(t => {
+                if (t) {
+                    return <Cell datetime={t} />
+                } else {
+                    return <p>-</p>
+                }
+            })}
+            <div style={{marginBottom: 20}} />
+            {date.bottom_datetimes.map(t => {
+                if (t) {
+                    return <Cell datetime={t} />
+                } else {
+                    return <p>-</p>
+                }
             })}
         </div>
     )

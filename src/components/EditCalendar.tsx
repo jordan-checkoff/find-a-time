@@ -27,23 +27,25 @@ export default function EditCalendar({data, user, setData} : props) {
 
     function EditCell({datetime} : datetime) {
 
+        const ms = datetime.valueOf()
+
         async function handleChange(e: ChangeEvent<HTMLInputElement>) {
             const dupe = {...data}
             if (e.target.checked) {
-                // dupe.availability_by_time.get(datetime)?.add(user)
-                // dupe.availability_by_user.get(user)?.add(datetime)
+                dupe.availability_by_time.get(ms)?.add(user)
+                dupe.availability_by_user.get(user)?.add(ms)
             } else {
-                // dupe.availability_by_time.get(datetime)?.delete(user)
-                // dupe.availability_by_user.get(user)?.delete(datetime)
+                dupe.availability_by_time.get(ms)?.delete(user)
+                dupe.availability_by_user.get(user)?.delete(ms)
             }
             setData(dupe)
         }
 
-        // const checked = data.availability_by_time.get(datetime)?.has(user)
+        const checked = data.availability_by_time.get(ms)?.has(user)
     
         return (
             <div>
-                {/* <input type="checkbox" checked={checked} onChange={handleChange} /> */}
+                <input type="checkbox" checked={checked} onChange={handleChange} />
             </div>
         )
     }

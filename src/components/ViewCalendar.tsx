@@ -16,12 +16,13 @@ export default function ViewCalendar({data} : props) {
 
 
     function AvailabilityCell({datetime} : datetime) {
-        // const users = data.availability_by_time.get(datetime)
+        const users = data.availability_by_time.get(datetime.valueOf())
         
         return (
             <div>
-                {/* {users && Array.from(users).map(x => <p>{x}</p>)} */}
-                <p>A</p>
+                <p>
+                    {users && users.size > 0 ? Array.from(users).map(x => <span>{x}</span>) : " "}
+                </p>
             </div>
         )
     }

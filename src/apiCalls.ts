@@ -38,17 +38,17 @@ export async function viewEventApi(id: string) {
 
         output.start_times = output.start_times.map((t: number) => dayjs.utc(t).local())
 
-        // const user_map = new Map()
-        // Object.keys(output.availability_by_user).forEach(key => {
-        //     user_map.set(key, new Set(output.availability_by_user[key]))
-        // })
-        // output.availability_by_user = user_map
+        const user_map = new Map()
+        Object.keys(output.availability_by_user).forEach(key => {
+            user_map.set(key, new Set(output.availability_by_user[key]))
+        })
+        output.availability_by_user = user_map
 
-        // const time_map = new Map()
-        // Object.keys(output.availability_by_time).forEach(key => {
-        //     time_map.set(key, new Set(output.availability_by_time[key]))
-        // })
-        // output.availability_by_time = time_map
+        const time_map = new Map()
+        Object.keys(output.availability_by_time).forEach(key => {
+            time_map.set(parseInt(key), new Set(output.availability_by_time[key]))
+        })
+        output.availability_by_time = time_map
 
         return output as Event
     }).catch(e => {
@@ -60,7 +60,7 @@ export async function viewEventApi(id: string) {
 
 }
 
-export async function updateAvailability(id: string, user: string, availability: Set<string>) {
+export async function updateAvailability(id: string, user: string, availability: Set<number>) {
     const update = {
         user,
         availability: Array.from(availability)
