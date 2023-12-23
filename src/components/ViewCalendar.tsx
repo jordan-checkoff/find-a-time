@@ -1,5 +1,5 @@
 import { Dayjs } from "dayjs";
-import { Event } from "../interfaces";
+import { Event } from "../interfaces/interfaces";
 import Calendar from "./Calendar";
 
 interface props {

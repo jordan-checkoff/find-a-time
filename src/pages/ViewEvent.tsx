@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { viewEventApi } from "../apiCalls";
-import Calendar from "../components/Calendar";
-import { Event } from "../interfaces";
+import { viewEventApi } from "../libs/apiCalls";
+import { Event } from "../interfaces/interfaces";
 import ViewCalendar from "../components/ViewCalendar";
 import EditCalendar from "../components/EditCalendar";
 import { useForm, Controller, SubmitHandler } from "react-hook-form"

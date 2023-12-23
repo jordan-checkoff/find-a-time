@@ -1,7 +1,7 @@
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Event } from "../interfaces";
+import { Event } from "../interfaces/interfaces";
 import Calendar from "./Calendar";
-import { updateAvailability } from "../apiCalls";
+import { updateAvailability } from "../libs/apiCalls";
 import { Dayjs } from "dayjs";
 
 interface props {

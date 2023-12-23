@@ -1,7 +1,7 @@
 
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-import { Event } from "./interfaces";
+import { Event } from "../interfaces/interfaces";
 
 dayjs.extend(utc)
 

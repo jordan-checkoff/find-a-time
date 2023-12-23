@@ -1,36 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './pages/CreateEvent';
-import ViewEvent from "./pages/ViewEvent";
+import App from "./App"
 import reportWebVitals from './reportWebVitals';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />
-  },
-  {
-    path: "/event/:id",
-    element: <ViewEvent />
-  }
-]);
-
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <RouterProvider router={router} />
+      <App />
     </LocalizationProvider>
   </React.StrictMode>
 );

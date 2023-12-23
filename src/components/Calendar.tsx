@@ -1,6 +1,6 @@
 
 import { ComponentType, ReactElement, useState } from "react"
-import { Event } from "../interfaces"
+import { Event } from "../interfaces/interfaces"
 import { SetStateAction, Dispatch } from "react"
 import { start } from "repl"
 import dayjs, { Dayjs } from "dayjs"
