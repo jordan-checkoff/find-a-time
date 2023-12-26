@@ -10,8 +10,7 @@ import { Dayjs } from "dayjs";
 
 interface FormData {
     title: string
-    startdate: Dayjs | null,
-    enddate: Dayjs | null,
+    dates: Dayjs[],
     starttime: Dayjs | null,
     endtime: Dayjs | null
 }
@@ -24,42 +23,31 @@ export default function EventForm() {
     const { control, formState, handleSubmit } = useForm<FormData>({
         defaultValues: {
           title: "",
-          startdate: null,
-          enddate: null,
+          dates: [],
           starttime: null,
           endtime: null
         },
       })
 
     const onSubmit: SubmitHandler<FormData> = async (data) => {
-        console.log(data)
-        console.log('a')
-        // const title = data.title
-        // const startdate = data.startdate?.$d
-        // const enddate = data.enddate?.$d
-        // const starttime = data.starttime?.$d
-        // const endtime = data.endtime?.$d
+        const starttime = data.starttime
+        const endtime = data.endtime
     
-        // if (title && startdate && starttime && enddate && endtime) {
-        //   startdate?.setHours(starttime.getHours() + starttime.getMinutes())
-        //   enddate?.setHours(starttime.getHours() + starttime.getMinutes())
+        if (starttime && endtime) {
+            const start_times = data.dates.map(x => x.hour(starttime.hour()).startOf('hour').valueOf())
+            let num_blocks = (endtime.hour() - starttime.hour()) * 2
+            if (num_blocks < 0) {
+                num_blocks += 48
+            }
     
-        //   const start_times = []
-        //   while (startdate <= enddate) {
-        //     start_times.push(startdate.getTime())
-        //     startdate.setDate(startdate.getDate() + 1)
-        //   }
+          const res = await createEventApi(data.title, start_times, num_blocks)
+          if (res) {
+            navigate("event/" + res["id"])
+          } else {
+            console.log('error')
+          }
     
-        //   const num_blocks = Math.floor((endtime.getTime() - starttime.getTime()) / (1000*60*30))
-    
-        //   const res = await createEventApi(title, start_times, num_blocks)
-        //   if (res) {
-        //     navigate("event/" + res["id"])
-        //   } else {
-        //     console.log('error')
-        //   }
-    
-        // }
+        }
       }
 
     return (
@@ -71,13 +59,7 @@ export default function EventForm() {
                 rules={{required: "Field is required"}}
             />
             <Controller
-                name="startdate"
-                control={control}
-                render={({ field }) => <DateInput value={field.value} onChange={field.onChange} name={field.name} error={formState.errors[field.name]?.message} />}
-                rules={{required: "Field is required"}}
-            />
-            <Controller
-                name="enddate"
+                name="dates"
                 control={control}
                 render={({ field }) => <DateInput value={field.value} onChange={field.onChange} name={field.name} error={formState.errors[field.name]?.message} />}
                 rules={{required: "Field is required"}}

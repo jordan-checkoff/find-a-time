@@ -13,7 +13,6 @@ export interface Event {
 export interface InputProps<T> {
     value: T,
     onChange: ChangeEventHandler<HTMLInputElement>
-    name: string,
     ref: Ref<HTMLInputElement>,
     error: string | undefined
 }

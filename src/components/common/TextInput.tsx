@@ -11,12 +11,11 @@ export interface props {
 }
 
 
-export default forwardRef(function TextInput({value, onChange, name, error}: props, ref) {
+export default forwardRef(function TextInput({value, onChange, error}: props, ref) {
 
     return (
         <TextField
             value={value}
-            name={name}
             onChange={onChange}
             inputRef={ref}
             error={error != undefined}
