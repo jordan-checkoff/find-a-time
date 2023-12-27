@@ -12,7 +12,7 @@ export interface Event {
 
 export interface InputProps<T> {
     value: T,
-    onChange: ChangeEventHandler<HTMLInputElement>
-    ref: Ref<HTMLInputElement>,
-    error: string | undefined
+    onChange: (...event: any[]) => void
+    error: string | undefined,
+    label: string
 }

@@ -9,6 +9,6 @@ interface props {
 export default function Button({text, form=false}: props) {
 
     return (
-        <MUIButton variant="contained" type={form ? "submit" : "button"}>{text}</MUIButton>
+        <MUIButton variant="contained" type={form ? "submit" : "button"} fullWidth>{text}</MUIButton>
     )
 }
