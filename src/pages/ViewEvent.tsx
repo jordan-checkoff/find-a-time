@@ -5,7 +5,12 @@ import { Event } from "../interfaces/interfaces";
 import ViewCalendar from "../components/ViewCalendar";
 import EditCalendar from "../components/EditCalendar";
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import { TextField, Button } from "@mui/material";
+import { Tabs, Tab } from "@mui/material";
+import dayjs from "dayjs";
+import TimezoneInput from "../components/common/TimezoneInput";
+import LoginForm from "../components/LoginForm";
+import ViewAvailability from "../components/ViewAvailability";
+import EditAvailablity from "../components/EditAvailability";
 
 interface FormData {
     user: string
@@ -16,12 +21,8 @@ export default function ViewEvent() {
     const { id } = useParams()
 
     const [eventData, setEventData] = useState<Event>()
-    const [user, setUser] = useState<string>("")
-
-    const { control, handleSubmit } = useForm<FormData>({defaultValues: {
-        user: ""
-      },
-    })
+    const [timezone, setTimezone] = useState(dayjs.tz.guess())
+    const [value, setValue] = useState<number>(0);
 
     useEffect(() => {
         const callViewEventApi = async () => {
@@ -35,39 +36,21 @@ export default function ViewEvent() {
         callViewEventApi()
     }, [id])
 
-    const onSubmit: SubmitHandler<FormData> = (data) => {
-        setUser(data.user)
-        if (!eventData?.availability_by_user.has(data.user)) {
-            const dupe = {...eventData}
-            dupe.availability_by_user?.set(data.user, new Set())
-        }
-    }
-
     if (eventData) {
         return (
-            <div>
-                <h1>{eventData.title}</h1>
-                <ViewCalendar data={eventData} />
-                {user
-                    ? <div>
-                        <p>User: {user}</p>
-                        <EditCalendar data={eventData} user={user} setData={setEventData}  />
-                        <button onClick={() => setUser("")}>Sign out</button>
-                    </div>
-                    : <div>
-                        <p>Enter your username to set your availability</p>
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <Controller
-                                name="user"
-                                control={control}
-                                render={({ field }) => <TextField {...field} />}
-                                rules={{required: true}}
-                            />
-                            <Button variant="contained" type="submit">Submit</Button>
-                        </form>
-                    </div>
+            <>
+                <Tabs value={value} onChange={(e, x) => setValue(x)} variant="fullWidth">
+                    <Tab label="View Availability" value={0} />
+                    <Tab label="Edit Availability" value={1} />
+                </Tabs>
+
+                {value == 0 ?
+                    <ViewAvailability data={eventData} timezone={timezone} />
+                    :
+                    <EditAvailablity data={eventData} timezone={timezone} setEventData={setEventData} />
                 }
-            </div>
+
+            </>
         )
     } else {
         return <p>Loading...</p>

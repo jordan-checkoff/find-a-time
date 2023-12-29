@@ -7,7 +7,8 @@ import { Dayjs } from "dayjs";
 interface props {
     data: Event,
     user: string,
-    setData: Dispatch<SetStateAction<Event | undefined>>
+    setData: Dispatch<SetStateAction<Event | undefined>>,
+    timezone: string
 }
 
 interface datetime {
@@ -16,7 +17,7 @@ interface datetime {
 
 
 
-export default function EditCalendar({data, user, setData} : props) {
+export default function EditCalendar({data, user, setData, timezone} : props) {
 
     useEffect(() => {
         const x = data.availability_by_user.get(user)
@@ -51,6 +52,6 @@ export default function EditCalendar({data, user, setData} : props) {
     }
 
     return (
-        <Calendar start_times={data.start_times} num_blocks={data.num_blocks} Cell={EditCell} />
+        <Calendar timezone={timezone} start_times={data.start_times} num_blocks={data.num_blocks} Cell={EditCell} />
     )
 }
