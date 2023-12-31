@@ -11,7 +11,7 @@ interface props {
 export default function ViewAvailability({data, timezone}: props) {
 
     return (
-        <div className="p-10">
+        <div className="p-4">
             <ViewCalendar data={data} timezone={timezone} />
         </div>
     )
