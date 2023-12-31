@@ -88,10 +88,10 @@ export default function Calendar({start_times, num_blocks, Cell, timezone}: prop
         <div>
             <div className="flex">
                 <div className="min-w-20">
-                    <p className="text-center">Time</p>
+                    <div className="h-8" />
                     {top_datetimes.map(t => <div className="h-8"><p>{t ? t.format("h:mm A") : " "}</p></div>)}
                     <div style={{marginBottom: 20}} />
-                    {bottom_datetimes.map(t => <div className="h-8"><p className="relative bottom-3">{t ? t.format("h:mm A") : " "}</p></div>)}
+                    {bottom_datetimes.map(t => <div className="h-8"><p className="relative bottom-5">{t ? t.format("h:mm A") : " "}</p></div>)}
                 </div>
                 <div className="flex overflow-x-auto">
                     {dates.map(d => <Column date={d} Cell={Cell} />)}

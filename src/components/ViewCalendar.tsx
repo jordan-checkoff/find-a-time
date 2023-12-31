@@ -24,10 +24,12 @@ export default function ViewCalendar({data, timezone} : props) {
         const users = data.availability_by_time.get(datetime.valueOf())
         const [open, setOpen] = useState(false)
 
+        let pct = users ? users.size / data.availability_by_user.size : 0
+        pct = Math.round(pct * 100) / 100
         
         return (
             <>
-                <div onClick={() => setOpen(true)} className={`h-full ${users && users.size > 0 && "bg-green-500"}`}>
+                <div onClick={() => setOpen(true)} className={`h-full bg-green-500`} style={{opacity: pct}}>
                 </div>
                 {users && users.size > 0 &&
                                 <Drawer
