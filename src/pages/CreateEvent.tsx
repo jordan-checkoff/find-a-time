@@ -4,7 +4,7 @@ import EventForm from '../components/EventForm';
 function CreateEvent() {
 
   return (
-    <div className="App">
+    <div>
       <h1 className='text-4xl'>Find A Time</h1>
       <p>Create a new event.</p>
       <EventForm />
