@@ -1,4 +1,4 @@
-import { Event } from "../interfaces/interfaces";
+import { Event } from "../../interfaces/interfaces";
 import ViewCalendar from "./ViewCalendar";
 
 

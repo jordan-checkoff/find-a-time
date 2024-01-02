@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { viewEventApi } from "../libs/apiCalls";
+import { viewEventApi } from "../utils/apiCalls";
 import { Event } from "../interfaces/interfaces";
-import ViewCalendar from "../components/ViewCalendar";
-import EditCalendar from "../components/EditCalendar";
+import ViewCalendar from "../components/view_event/ViewCalendar";
+import EditCalendar from "../components/view_event/EditCalendar";
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { Tabs, Tab } from "@mui/material";
 import dayjs from "dayjs";
 import TimezoneInput from "../components/common/TimezoneInput";
-import LoginForm from "../components/LoginForm";
-import ViewAvailability from "../components/ViewAvailability";
-import EditAvailablity from "../components/EditAvailability";
+import LoginForm from "../components/view_event/LoginForm";
+import ViewAvailability from "../components/view_event/ViewAvailability";
+import EditAvailablity from "../components/view_event/EditAvailability";
 
 interface FormData {
     user: string

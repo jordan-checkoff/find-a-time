@@ -1,7 +1,7 @@
 import { useState } from "react"
 import EditCalendar from "./EditCalendar"
 import LoginForm from "./LoginForm"
-import { Event } from "../interfaces/interfaces"
+import { Event } from "../../interfaces/interfaces"
 
 
 interface props {

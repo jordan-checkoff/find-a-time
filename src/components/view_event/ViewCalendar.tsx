@@ -1,9 +1,9 @@
 import { Dayjs } from "dayjs";
-import { Event } from "../interfaces/interfaces";
+import { Event } from "../../interfaces/interfaces";
 import Calendar from "./Calendar";
 import { Drawer, Popover } from "@mui/material";
 import { useRef, useState } from "react";
-import TimezoneInput from "./common/TimezoneInput";
+import TimezoneInput from "../common/TimezoneInput";
 import dayjs from "dayjs";
 
 interface props {

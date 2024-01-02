@@ -2,17 +2,14 @@
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import { Event } from "../interfaces/interfaces";
+import { CreateEventResponse } from "../interfaces/CreateEventResponse";
+import { CreateEventRequest } from "../interfaces/CreateEventRequest";
 
 dayjs.extend(utc)
 
 const endpoint = "https://mcyvefz876.execute-api.us-east-2.amazonaws.com/prod/";
 
-export async function createEventApi(title: string, start_times: Array<number>, num_blocks: number) {
-    const event = {
-        title,
-        start_times,
-        num_blocks,
-    }
+export async function createEventApi(event: CreateEventRequest): Promise<CreateEventResponse> {
 
     const res = await fetch(endpoint, {
         method: "POST",
@@ -21,10 +18,10 @@ export async function createEventApi(title: string, start_times: Array<number>, 
             "Content-Type": "application/json",
         },
     }).then(async res => {
-        return await res.json()
+        const json = await res.json()
+        return {id: json.id}
     }).catch(e => {
-        console.log(e)
-        return null;
+        return {id: "x"};
     });
 
     return res

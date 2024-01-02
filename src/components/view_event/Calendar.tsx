@@ -1,12 +1,12 @@
 
 import { ComponentType, ReactElement, useState } from "react"
-import { Event } from "../interfaces/interfaces"
+import { Event } from "../../interfaces/interfaces"
 import { SetStateAction, Dispatch } from "react"
 import { start } from "repl"
 import dayjs, { Dayjs } from "dayjs"
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import TimezoneInput from "./common/TimezoneInput"
+import TimezoneInput from "../common/TimezoneInput"
 
 
 dayjs.extend(utc)
