@@ -1,5 +1,5 @@
 
-import CreateEventController from '../components/create_event/CreateEventController';
+import EventFormController from "../components/create_event/EventFormController";
 
 function CreateEvent() {
 
@@ -9,7 +9,7 @@ function CreateEvent() {
     <div>
       <h1 className='text-4xl'>Find A Time</h1>
       <p>Create a new event.</p>
-      <CreateEventController />
+      <EventFormController />
     </div>
   );
 }

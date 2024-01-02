@@ -1,11 +1,11 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { CreateEventFormDataInterface } from "../../interfaces/CreateEventInterface"
+import { CreateEventFormDataInterface } from "../../interfaces/EventFormInterface"
 import EventForm from "./EventForm"
 import { useNavigate } from 'react-router-dom';
-import { createEventApi } from "../../utils/apiCalls";
+import { createEvent } from "../../utils/api_calls";
 
 
-export default function CreateEvesntController() {
+export default function EventFormController() {
 
     const { control, handleSubmit } = useForm<CreateEventFormDataInterface>({
         defaultValues: {
@@ -31,8 +31,8 @@ export default function CreateEvesntController() {
                 num_blocks += 48
             }
     
-          const res = await createEventApi({title: data.title, start_times: start_times, num_blocks: num_blocks})
-          if (res.id == "x") {
+          const res = await createEvent({title: data.title, start_times: start_times, num_blocks: num_blocks})
+          if (res.statusCode != 200) {
             console.log('error')
           } else {
             navigate("event/" + res.id)

@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import DropdownInput from "./DropdownInput";
-import TIMEZONE_OPTIONS from "../../utils/TimezoneOptions";
+import { TIMEZONE_OPTIONS } from "../../utils/dropdown_options";
 
 
 interface props {

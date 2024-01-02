@@ -3,7 +3,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 import { InputProps } from '../../interfaces/interfaces';
 import DropdownInput from '../common/DropdownInput';
-import TIME_OPTIONS from '../../utils/TimeOptions';
+import { TIME_OPTIONS } from '../../utils/dropdown_options';
 
 
 

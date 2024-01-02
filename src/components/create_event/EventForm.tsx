@@ -4,7 +4,7 @@ import TextInput from "../common/TextInput";
 import DateInput from "./DateInput";
 import TimeInput from "./TimeInput";
 import MVCInterface from "../../interfaces/MVCInterface";
-import CreateEventInterface from "../../interfaces/CreateEventInterface";
+import CreateEventInterface from "../../interfaces/EventFormInterface";
 
 
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { viewEventApi } from "../utils/apiCalls";
+import { viewEventApi } from "../utils/api_calls";
 import { Event } from "../interfaces/interfaces";
 import ViewCalendar from "../components/view_event/ViewCalendar";
 import EditCalendar from "../components/view_event/EditCalendar";
