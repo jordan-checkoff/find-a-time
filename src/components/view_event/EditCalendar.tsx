@@ -8,7 +8,8 @@ interface props {
     data: Event,
     user: string,
     setData: Dispatch<SetStateAction<Event | undefined>>,
-    timezone: string
+    timezone: string,
+    setUser: (x: null) => void
 }
 
 interface datetime {
@@ -17,7 +18,7 @@ interface datetime {
 
 
 
-export default function EditCalendar({data, user, setData, timezone} : props) {
+export default function EditCalendar({data, user, setData, timezone, setUser} : props) {
 
     useEffect(() => {
         const x = data.availability_by_user.get(user)
@@ -52,6 +53,10 @@ export default function EditCalendar({data, user, setData, timezone} : props) {
     }
 
     return (
-        <Calendar timezone={timezone} start_times={data.start_times} num_blocks={data.num_blocks} Cell={EditCell} />
+        <div>
+            <p>User: {user}</p>
+            <Calendar timezone={timezone} start_times={data.start_times} num_blocks={data.num_blocks} Cell={EditCell} />
+            <button onClick={() => setUser(null)}>Sign out</button>
+        </div>        
     )
 }

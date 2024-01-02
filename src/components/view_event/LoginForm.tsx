@@ -4,15 +4,14 @@ import TextInput from "../common/TextInput"
 import { Event } from "../../interfaces/interfaces"
 
 interface props {
-    eventData: Event
-    setUser: React.Dispatch<React.SetStateAction<string>>
+    setUser: (x: string) => void
 }
 
 interface FormData {
     user: string
 }
 
-export default function LoginForm({eventData, setUser}: props) {
+export default function LoginForm({setUser}: props) {
 
     const { control, handleSubmit } = useForm<FormData>({defaultValues: {
         user: ""
@@ -21,10 +20,6 @@ export default function LoginForm({eventData, setUser}: props) {
 
     const onSubmit: SubmitHandler<FormData> = (data) => {
         setUser(data.user)
-        if (!eventData?.availability_by_user.has(data.user)) {
-            const dupe = {...eventData}
-            dupe.availability_by_user?.set(data.user, new Set())
-        }
     }
 
     return (

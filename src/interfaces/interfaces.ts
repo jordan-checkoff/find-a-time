@@ -16,3 +16,8 @@ export interface InputProps<T> {
     error: string | undefined,
     label: string
 }
+
+export interface ReducerAction<T> {
+    action: T
+    value: any
+}

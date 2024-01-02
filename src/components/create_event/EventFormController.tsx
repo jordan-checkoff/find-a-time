@@ -42,6 +42,6 @@ export default function EventFormController() {
       }
 
     return (
-        <EventForm model={{RHFController: control, RHFSubmit: handleSubmit(onSubmit)}} />
+        <EventForm model={{RHFController: control, RHFSubmit: handleSubmit(onSubmit)}} handleEvent={() => {}} />
     )
 }
