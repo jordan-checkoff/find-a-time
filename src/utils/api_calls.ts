@@ -7,7 +7,7 @@ import parseEvent from "./parseEvent";
 
 dayjs.extend(utc)
 
-const dev = true
+const dev = false
 
 const endpoint = "https://mcyvefz876.execute-api.us-east-2.amazonaws.com/prod/";
 
@@ -38,16 +38,15 @@ export async function createEvent(req: CreateEventRequest): Promise<CreateEventR
 export async function getEvent(req: GetEventRequest): Promise<GetEventResponse> {
 
     if (dev) {
-        console.log(parseEvent({id: "123", title: "event_title", start_times: [1234588568878, 2234588568878], num_blocks: 5, availability_by_user: {}, availability_by_time: {}}))
         return {statusCode: 200, event: parseEvent({id: "123", title: "event_title", start_times: [1234568885878, 2234588568878], num_blocks: 5, availability_by_user: {}, availability_by_time: {}})} as GetEventResponse
     }
 
     const output: GetEventResponse = await fetch(endpoint + req.id).then(async res => {
         const json = await res.json()
         const event = parseEvent(json)
-        return {statusCode: json.statusCode, event: event}
+        return {statusCode: res.status, event: event}
     }).catch(e => {
-        return {statusCode: e.statusCode, event: null};
+        return {statusCode: e.status, event: null};
     });
 
     return output

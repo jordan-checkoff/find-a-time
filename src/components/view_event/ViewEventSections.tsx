@@ -6,6 +6,7 @@ import { Tabs, Tab } from "@mui/material";
 import ViewCalendar from "./ViewCalendar";
 import LoginForm from "./LoginForm";
 import EditCalendar from "./EditCalendar";
+import { Dayjs } from "dayjs";
 
 
 
@@ -17,6 +18,10 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
 
     const setUser = (x: string | null) => {
         handleEvent({action: EventAvailabilityActions.SET_USER, value: x})
+    }
+
+    const updateAvailability = (x: number, y: boolean) => {
+        handleEvent({action: EventAvailabilityActions.UPDATE_AVAILABILITY, value: {datetime: x, selected: y}})
     }
 
     if (model.loading) {
@@ -34,7 +39,7 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
                 {model.page == EventAvailabilityPages.VIEW ?
                     <ViewCalendar data={model.event} timezone={model.timezone} />
                     : model.user ?
-                        <EditCalendar data={model.event} user={model.user} setData={() => {}} timezone={model.timezone} setUser={setUser}  />
+                        <EditCalendar data={model.event} user={model.user} setData={updateAvailability} timezone={model.timezone} setUser={setUser}  />
                         : <LoginForm setUser={setUser} />
                 }
             </div>

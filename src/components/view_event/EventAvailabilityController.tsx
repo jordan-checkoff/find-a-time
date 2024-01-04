@@ -1,8 +1,8 @@
 import { useEffect, useReducer } from "react";
 import { useParams } from "react-router-dom";
-import { getEvent } from "../../utils/api_calls";
+import { getEvent, updateAvailability } from "../../utils/api_calls";
 import { ReducerAction } from "../../interfaces/interfaces";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import EventAvailabilityInterface, { EventAvailabilityPages } from "../../interfaces/EventAvailabilityInterface";
 import { GetEventResponse } from "../../interfaces/APIInterfaces";
 import { blankEvent } from "../../utils/parseEvent";
@@ -18,6 +18,8 @@ export enum EventAvailabilityActions {
 }
 
 export default function EventAvailabilityController() {
+
+    const { id } = useParams()
 
     const initialState: EventAvailabilityInterface = {
         loading: true,
@@ -52,12 +54,31 @@ export default function EventAvailabilityController() {
             }
         }
 
+        if (action == EventAvailabilityActions.UPDATE_AVAILABILITY) {
+            if (state.user) {
+                if (!state.event.availability_by_user.has(state.user)) {
+                    state.event.availability_by_user.set(state.user, new Set())
+                }
+                if (value.selected) {
+                    state.event.availability_by_user.get(state.user)?.add(value.datetime)
+                    state.event.availability_by_time.get(value.datetime)?.add(state.user)
+                } else {
+                    state.event.availability_by_user.get(state.user)?.delete(value.datetime)
+                    state.event.availability_by_time.get(value.datetime)?.delete(state.user)
+                }
+            }
+
+            updateAvailability(id as string, state.user as string, state.event.availability_by_user.get(state.user as string) as Set<number>)
+
+            return {
+                ...state
+            }
+        }
+
         return state
     }
 
     const [state, dispatch] = useReducer(reducer, initialState)
-
-
 
     const fetchEvent = async (id: string) => {
         const res: GetEventResponse = await getEvent({id})
@@ -65,10 +86,6 @@ export default function EventAvailabilityController() {
             dispatch({action: EventAvailabilityActions.SET_EVENT, value: res.event})
         }
     }
-
-
-
-    const { id } = useParams()
 
     useEffect(() => {
         if (id) {
