@@ -2,6 +2,7 @@ import { Controller, useForm, SubmitHandler } from "react-hook-form"
 import Button from "../common/Button"
 import TextInput from "../common/TextInput"
 import { Event } from "../../interfaces/interfaces"
+import { createTheme } from "@mui/material"
 
 interface props {
     setUser: (x: string) => void
@@ -24,14 +25,15 @@ export default function LoginForm({setUser}: props) {
 
     return (
         <div>
-            <p>Enter your username to set your availability</p>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Controller
-                    name="user"
-                    control={control}
-                    render={({ field, formState }) => <TextInput value={field.value} onChange={field.onChange} error={formState.errors[field.name]?.message} label="User" />}
-                    rules={{required: "Field is required"}}
-                />
+                <div className="mb-8">
+                    <Controller
+                        name="user"
+                        control={control}
+                        render={({ field, formState }) => <TextInput value={field.value} onChange={field.onChange} error={formState.errors[field.name]?.message} label="Username" />}
+                        rules={{required: "Field is required"}}
+                    />
+                </div>
                 <Button text={"Log In"} form={true} />
             </form>
         </div>

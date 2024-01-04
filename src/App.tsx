@@ -6,8 +6,8 @@ export default function App() {
 
     return (
         <div>
-            <header className="py-4 px-8">
-                <img src={logo} className="w-60" />
+            <header className="py-6 px-8">
+                <img src={logo} className="w-48" />
             </header>
             <Router />
         </div>

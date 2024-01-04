@@ -15,7 +15,7 @@ export default function EventForm({model}: MVCInterface<CreateEventInterface, nu
     const { RHFController, RHFSubmit } = model
 
     return (
-      <div className="p-8">
+      <div className="px-8 py-4">
         <form onSubmit={RHFSubmit} className="border-2 p-8 m-auto max-w-[500px]">
           <div className="mb-6 text-center">
             <h2 className="text-3xl">Create Event</h2>
