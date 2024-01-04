@@ -28,14 +28,14 @@ export default forwardRef(function DateInput({value, onChange, error, label}: In
 
     return (
         <div>
+            <p className="mb-1">{label}</p>
             <DatePicker
                 className="rmdp-mobile"
                 multiple
                 value={values}
                 onChange={handleChange}
                 containerClassName="w-full"
-                inputClass={error == undefined ? 'w-full border rounded border-black/25 p-4 hover:border-black' : 'w-full border rounded border-red-500 p-4'}
-                placeholder='Date options'
+                inputClass={error == undefined ? 'w-full border rounded border-black/25 py-1.5 px-3 hover:border-black' : 'w-full border rounded border-black/25 py-1.5 px-3 border-red-500'}
             />
             <p className="text-red-500 text-xs ml-4">{error}</p>
         </div>

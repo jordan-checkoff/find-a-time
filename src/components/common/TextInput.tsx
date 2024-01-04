@@ -7,14 +7,15 @@ export default forwardRef(function TextInput({value, onChange, error, label}: In
 
     return (
         <div>
+            <p className="mb-1">{label}</p>
             <TextField
                 value={value}
                 onChange={onChange}
                 inputRef={ref}
                 error={error != undefined}
                 helperText={error != undefined && error}
-                label={label}
                 fullWidth
+                size="small"
             />
         </div>
     )

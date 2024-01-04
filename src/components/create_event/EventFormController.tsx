@@ -3,6 +3,7 @@ import { CreateEventFormDataInterface } from "../../interfaces/EventFormInterfac
 import EventForm from "./EventForm"
 import { useNavigate } from 'react-router-dom';
 import { createEvent } from "../../utils/api_calls";
+import dayjs from "dayjs";
 
 
 export default function EventFormController() {
@@ -11,6 +12,7 @@ export default function EventFormController() {
         defaultValues: {
           title: "",
           dates: [],
+          timezone: dayjs.tz.guess(),
           starttime: null,
           endtime: null
         },

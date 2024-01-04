@@ -20,15 +20,16 @@ export default forwardRef(function DropdownInput<T extends (number | string)>({v
 
     return (
         <div>
+            <p className="mb-1">{label}</p>
             <FormControl fullWidth error={error!= undefined}>
-                <InputLabel id="demo-simple-select-label">{label}</InputLabel>
+                {/* <InputLabel id="demo-simple-select-label" size="small">{label}</InputLabel> */}
                 <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={value}
-                    label="Age"
                     onChange={onChange}
                     inputRef={ref}
+                    size="small"
                 >
                     {options.map(({val, display}) => <MenuItem value={val}>{display}</MenuItem>)}
                 </Select>

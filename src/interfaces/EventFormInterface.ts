@@ -11,5 +11,6 @@ export interface CreateEventFormDataInterface {
     title: string
     dates: Dayjs[],
     starttime: Dayjs | null,
-    endtime: Dayjs | null
+    endtime: Dayjs | null,
+    timezone: string
 }

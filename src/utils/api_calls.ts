@@ -26,9 +26,9 @@ export async function createEvent(req: CreateEventRequest): Promise<CreateEventR
     }).then(async res => {
         const json = await res.json()
         const id = "id" in json ? json.id : null
-        return {statusCode: json.statusCode, id: id}
+        return {statusCode: res.status, id: id}
     }).catch(e => {
-        return {statusCode: e.statusCode, id: null}
+        return {statusCode: e.status, id: null}
     });
 
     return output
