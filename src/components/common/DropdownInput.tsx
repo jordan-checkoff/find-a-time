@@ -20,7 +20,7 @@ export default forwardRef(function DropdownInput<T extends (number | string)>({v
 
     return (
         <div>
-            <p className="mb-1">{label}</p>
+            <p className="mb-1 text-sm">{label}{error && <span className="text-red-500"> - {error}</span>}</p>
             <FormControl fullWidth error={error!= undefined}>
                 {/* <InputLabel id="demo-simple-select-label" size="small">{label}</InputLabel> */}
                 <Select
@@ -33,7 +33,6 @@ export default forwardRef(function DropdownInput<T extends (number | string)>({v
                 >
                     {options.map(({val, display}) => <MenuItem value={val}>{display}</MenuItem>)}
                 </Select>
-                {error != undefined && <FormHelperText>{error}</FormHelperText>}
             </FormControl>
         </div>
     )

@@ -7,13 +7,12 @@ export default forwardRef(function TextInput({value, onChange, error, label}: In
 
     return (
         <div>
-            <p className="mb-1">{label}</p>
+            <p className="mb-1 text-sm">{label}{error && <span className="text-red-500"> - {error}</span>}</p>
             <TextField
                 value={value}
                 onChange={onChange}
                 inputRef={ref}
                 error={error != undefined}
-                helperText={error != undefined && error}
                 fullWidth
                 size="small"
             />
