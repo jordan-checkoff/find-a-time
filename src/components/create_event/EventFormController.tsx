@@ -40,12 +40,12 @@ export default function EventFormController() {
 
           console.log(start_times, num_blocks, data.timezone)
     
-          // const res = await createEvent({title: data.title, start_times: start_times, num_blocks: num_blocks})
-          // if (res.statusCode != 200) {
-          //   console.log('error')
-          // } else {
-          //   navigate("event/" + res.id)
-          // }
+          const res = await createEvent({title: data.title, start_times: start_times, num_blocks: num_blocks})
+          if (res.statusCode != 200) {
+            console.log('error')
+          } else {
+            navigate("event/" + res.id)
+          }
     
         }
       }
