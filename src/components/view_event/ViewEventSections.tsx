@@ -30,9 +30,9 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
 
     return (
         <>
-            <Tabs value={model.page} onChange={(e, x) => setPage(x)} variant="fullWidth" TabIndicatorProps={{style: {background:'red'}}}>
-                <Tab label="View Availability" value={EventAvailabilityPages.VIEW} style={{ color: 'black' }} />
-                <Tab label="Edit Availability" value={EventAvailabilityPages.EDIT} style={{ color: 'black' }} />
+            <Tabs value={model.page} onChange={(e, x) => setPage(x)} variant="fullWidth" TabIndicatorProps={{style: {background:'red', height: 3}}}>
+                <Tab label="View Availability" value={EventAvailabilityPages.VIEW} style={{ color: 'black', backgroundColor: "#EEE" }} />
+                <Tab label="Edit Availability" value={EventAvailabilityPages.EDIT} style={{ color: 'black', backgroundColor: "#EEE" }} />
             </Tabs>
 
             <div className="p-4">

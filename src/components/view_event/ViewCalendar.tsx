@@ -29,7 +29,7 @@ export default function ViewCalendar({data, timezone} : props) {
         
         return (
             <>
-                <div onClick={() => setOpen(true)} className={`h-full bg-green-500`} style={{opacity: pct}}>
+                <div onClick={() => setOpen(true)} className={`h-full bg-red-500`} style={{opacity: pct}}>
                 </div>
                 {users && users.size > 0 &&
                                 <Drawer

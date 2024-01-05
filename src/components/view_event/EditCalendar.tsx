@@ -3,6 +3,7 @@ import { Event } from "../../interfaces/interfaces";
 import Calendar from "./Calendar";
 import { updateAvailability } from "../../utils/api_calls";
 import { Dayjs } from "dayjs";
+import { Checkbox } from "@mui/material";
 
 interface props {
     data: Event,
@@ -27,17 +28,13 @@ export default function EditCalendar({data, user, setData, timezone, setUser} : 
         const checked = data.availability_by_time.get(ms)?.has(user)
     
         return (
-            <div>
-                <input type="checkbox" checked={checked} onChange={() => setData(datetime.valueOf(), !checked)} />
+            <div className="flex justify-center h-full">
+                <Checkbox checked={checked} onChange={() => setData(datetime.valueOf(), !checked)} style={{padding: 0}} />
             </div>
         )
     }
 
     return (
-        <div>
-            <p>User: {user}</p>
-            <Calendar timezone={timezone} start_times={data.start_times} num_blocks={data.num_blocks} Cell={EditCell} />
-            <button onClick={() => setUser(null)}>Sign out</button>
-        </div>        
+        <Calendar timezone={timezone} start_times={data.start_times} num_blocks={data.num_blocks} Cell={EditCell} />
     )
 }
