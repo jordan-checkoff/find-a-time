@@ -1,4 +1,4 @@
-import { Event } from "./interfaces"
+import Event from "./Event"
 
 export enum EventAvailabilityPages {
     VIEW,
@@ -7,7 +7,7 @@ export enum EventAvailabilityPages {
 
 export default interface EventAvailabilityInterface {
     loading: boolean
-    event: Event,
+    event: Event | null,
     page: EventAvailabilityPages
     user: string | null,
     timezone: string

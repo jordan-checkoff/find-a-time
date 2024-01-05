@@ -1,4 +1,4 @@
-import { Event } from "./interfaces"
+import Event from "./Event"
 
 interface Response {
     statusCode: number
@@ -21,5 +21,10 @@ export interface GetEventRequest {
 }
 
 export interface GetEventResponse extends Response {
-    event: Event | null
+    id: string,
+    title: string,
+    start_times: number[],
+    num_blocks: number,
+    availability_by_user: any,
+    availability_by_time: any
 }

@@ -1,7 +1,7 @@
 import { Controller, useForm, SubmitHandler } from "react-hook-form"
 import Button from "../common/Button"
 import TextInput from "../common/TextInput"
-import { Event } from "../../interfaces/interfaces"
+import Event from "../../interfaces/Event"
 import { createTheme } from "@mui/material"
 
 interface props {

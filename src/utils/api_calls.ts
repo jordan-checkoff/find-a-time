@@ -1,9 +1,8 @@
 
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-import { Event } from "../interfaces/interfaces";
+import Event from "../interfaces/Event";
 import { CreateEventRequest, CreateEventResponse, GetEventRequest, GetEventResponse } from "../interfaces/APIInterfaces";
-import parseEvent from "./parseEvent";
 
 dayjs.extend(utc)
 
@@ -35,21 +34,17 @@ export async function createEvent(req: CreateEventRequest): Promise<CreateEventR
 }
 
 
-export async function getEvent(req: GetEventRequest): Promise<GetEventResponse> {
+export async function getEvent(id: string): Promise<GetEventResponse> {
 
     if (dev) {
-        return {statusCode: 200, event: parseEvent({id: "123", title: "event_title", start_times: [1234568885878, 2234588568878], num_blocks: 5, availability_by_user: {}, availability_by_time: {}})} as GetEventResponse
+        return {statusCode: 200, id: "123", title: "event_title", start_times: [1234568885878, 2234588568878], num_blocks: 5, availability_by_user: {}, availability_by_time: {}} as GetEventResponse
     }
 
-    const output: GetEventResponse = await fetch(endpoint + req.id).then(async res => {
-        const json = await res.json()
-        const event = parseEvent(json)
-        return {statusCode: res.status, event: event}
-    }).catch(e => {
-        return {statusCode: e.status, event: null};
-    });
+    const res = await fetch(endpoint + id)
+    const json = await res.json()
 
-    return output
+    return {statusCode: res.status, ...json}
+
 
 }
 

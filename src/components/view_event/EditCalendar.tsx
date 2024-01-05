@@ -1,5 +1,5 @@
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Event } from "../../interfaces/interfaces";
+import Event from "../../interfaces/Event";
 import Calendar from "./Calendar";
 import { updateAvailability } from "../../utils/api_calls";
 import { Dayjs } from "dayjs";
@@ -13,7 +13,7 @@ interface props {
     setUser: (x: null) => void
 }
 
-interface datetime {
+interface cellProps {
     datetime: Dayjs
 }
 
@@ -21,7 +21,7 @@ interface datetime {
 
 export default function EditCalendar({data, user, setData, timezone, setUser} : props) {
 
-    function EditCell({datetime} : datetime) {
+    function EditCell({datetime} : cellProps) {
 
         const ms = datetime.valueOf()
 
@@ -35,6 +35,6 @@ export default function EditCalendar({data, user, setData, timezone, setUser} : 
     }
 
     return (
-        <Calendar timezone={timezone} start_times={data.start_times} num_blocks={data.num_blocks} Cell={EditCell} />
+        <Calendar timezone={timezone} data={data} Cell={EditCell} />
     )
 }
