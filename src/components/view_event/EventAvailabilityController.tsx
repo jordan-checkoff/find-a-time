@@ -57,8 +57,6 @@ export default function EventAvailabilityController() {
 
             state.event.update_availability(state.user, value.selected, value.datetime)
 
-            updateAvailability(id as string, state.user as string, state.event.availability_by_user.get(state.user as string) as Set<number>)
-
             return {
                 ...state,
                 event: state.event

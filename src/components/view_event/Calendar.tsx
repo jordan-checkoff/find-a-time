@@ -1,5 +1,5 @@
 
-import { ComponentType } from "react"
+import { ComponentType, useState } from "react"
 import dayjs, { Dayjs } from "dayjs"
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -32,17 +32,15 @@ export default function Calendar({Cell, data, timezone}: props) {
 
 
     return (
-        <div>
-            <div className="flex">
-                <div className="min-w-16 mr-4">
-                    <div className="h-8" />
-                    {top_datetimes.map(t => <div className="h-8"><p className="text-xs">{t ? t.format("h:mm A") : " "}</p></div>)}
-                    <div style={{marginBottom: 10}} />
-                    {bottom_datetimes.map(t => <div className="h-8"><p className="text-sm text-right relative bottom-5">{t ? t.format("h:mm A") : " "}</p></div>)}
-                </div>
-                <div className="flex overflow-x-auto">
-                    {dates.map(d => <Column date={d} Cell={Cell} />)}
-                </div>
+        <div className="flex pb-10">
+            <div className="min-w-16 mr-4">
+                <div className="h-8" />
+                {top_datetimes.map(t => <div className="h-8"><p className="text-xs">{t ? t.format("h:mm A") : " "}</p></div>)}
+                <div style={{marginBottom: 10}} />
+                {bottom_datetimes.map(t => <div className="h-8"><p className="text-sm text-right relative bottom-5">{t ? t.format("h:mm A") : " "}</p></div>)}
+            </div>
+            <div className="flex overflow-x-auto">
+                {dates.map(d => <Column date={d} Cell={Cell} />)}
             </div>
         </div>
     )

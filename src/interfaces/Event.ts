@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs"
-import { getEvent } from "../utils/api_calls";
+import { getEvent, updateAvailability } from "../utils/api_calls";
 import { GetEventResponse } from "./APIInterfaces";
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -108,4 +108,13 @@ export default class Event {
 
         return {dates, top_datetimes, bottom_datetimes}
     }
+
+
+    send_update(user: string) {
+        const x = this.availability_by_user.get(user)
+        if (x) {
+            updateAvailability(this.id, user, x)
+        }
+    }
+
 }
