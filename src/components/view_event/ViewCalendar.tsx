@@ -1,25 +1,27 @@
 import { Dayjs } from "dayjs";
-import Event from "../../interfaces/Event";
+import Event, { Calendar as C } from "../../interfaces/Event";
 import Calendar from "./Calendar";
 import { Drawer } from "@mui/material";
 import { useState } from "react";
 
 interface props {
     data: Event,
-    timezone: string
+    calendar: C
 }
 
 interface cellProps {
-    datetime: Dayjs
+    rowNum: number,
+    colNum: number
 }
 
 
 
-export default function ViewCalendar({data, timezone} : props) {
+export default function ViewCalendar({data, calendar} : props) {
 
 
-    function AvailabilityCell({datetime} : cellProps) {
-        const users = data.availability_by_time.get(datetime.valueOf())
+    function AvailabilityCell({rowNum, colNum} : cellProps) {
+        const datetime = calendar.get_datetime(rowNum, colNum)
+        const users = data.availability_by_time.get(datetime)
         const [open, setOpen] = useState(false)
 
         let pct = users ? users.size / data.availability_by_user.size : 0
@@ -50,11 +52,13 @@ export default function ViewCalendar({data, timezone} : props) {
             }
             </>
         )
+
+        return <p>A</p>
     }
 
     return (
         <div>
-            <Calendar Cell={AvailabilityCell} data={data} timezone={timezone} />
+            <Calendar Cell={AvailabilityCell} data={data} calendar={calendar} />
         </div>
     )
 }

@@ -8,6 +8,7 @@ import LoginForm from "./LoginForm";
 import EditCalendar from "./EditCalendar";
 import { Dayjs } from "dayjs";
 import EditCalendarController from "./EditCalendarController";
+import TimezoneInput from "../common/TimezoneInput";
 
 
 
@@ -25,11 +26,15 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
         handleEvent({action: EventAvailabilityActions.UPDATE_AVAILABILITY, value: {datetime: x, selected: y}})
     }
 
+    const setTimezone = (x: string) => {
+        handleEvent({action: EventAvailabilityActions.SET_TIMEZONE, value: x})
+    }
+
     if (model.loading) {
         return <p>Loading...</p>
     }
 
-    if (!model.event) {
+    if (!model.event || !model.calendar) {
         return <p>Error</p>
     }
 
@@ -41,10 +46,11 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
             </Tabs>
 
             <div className="p-4">
+                <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
                 {model.page == EventAvailabilityPages.VIEW ?
-                    <ViewCalendar data={model.event} timezone={model.timezone} />
+                    <ViewCalendar data={model.event} calendar={model.calendar} />
                     : model.user ?
-                        <EditCalendarController data={model.event} user={model.user} setData={updateAvailability} timezone={model.timezone} />
+                        <EditCalendarController data={model.event} user={model.user} setData={updateAvailability} calendar={model.calendar} />
                         : <LoginForm setUser={setUser} />
                 }
             </div>

@@ -1,9 +1,9 @@
 
-import { ComponentType, useState } from "react"
+import { ComponentType, useEffect, useRef, useState } from "react"
 import dayjs, { Dayjs } from "dayjs"
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import Event from "../../interfaces/Event";
+import Event, { Calendar as C } from "../../interfaces/Event";
 
 
 dayjs.extend(utc)
@@ -12,36 +12,27 @@ dayjs.extend(timezone)
 interface props {
     data: Event,
     Cell: ComponentType<datetime>,
-    timezone: string
+    calendar: C
 }
 
 interface datetime {
-    datetime: Dayjs,
-    column: number
+    colNum: number,
+    rowNum: number
 }
 
-interface DateInfo {
-    date: Dayjs
-    top_datetimes: (Dayjs | null)[]
-    bottom_datetimes: (Dayjs | null)[]
-    connected: boolean
-}
-
-export default function Calendar({Cell, data, timezone}: props) {
-
-    const {dates, top_datetimes, bottom_datetimes} = data.get_calendar(timezone)
+export default function Calendar({Cell, data, calendar}: props) {
 
 
     return (
         <div className="flex pb-10">
             <div className="min-w-16 mr-4">
                 <div className="h-8" />
-                {top_datetimes.map(t => <div className="h-8"><p className="text-xs">{t ? t.format("h:mm A") : " "}</p></div>)}
+                {calendar.get_top_blocks().map(t => <div className="h-8"><p className="text-xs">{t}</p></div>)}
                 <div style={{marginBottom: 10}} />
-                {bottom_datetimes.map(t => <div className="h-8"><p className="text-sm text-right relative bottom-5">{t ? t.format("h:mm A") : " "}</p></div>)}
+                {calendar.get_bottom_blocks().map(t => <div className="h-8"><p className="text-sm text-right relative bottom-5">{t}</p></div>)}
             </div>
             <div className="flex overflow-x-auto">
-                {dates.map((d, i) => <Column date={d} Cell={Cell} i={i} />)}
+                {calendar.get_dates().map((d, i) => <Column Cell={Cell} date={d} top_blocks={calendar.get_top_blocks()} bottom_blocks={calendar.get_bottom_blocks()} colNum={i} />)}
             </div>
         </div>
     )
@@ -49,38 +40,32 @@ export default function Calendar({Cell, data, timezone}: props) {
 
 
 interface ColumnProps {
-    date: DateInfo,
     Cell: ComponentType<datetime>,
-    i: number
+    top_blocks: string[],
+    bottom_blocks: string[],
+    colNum: number,
+    date: string
 }
 
-function Column({date, Cell, i}: ColumnProps) {
+function Column({bottom_blocks, Cell, colNum, top_blocks, date}: ColumnProps) {
 
     return (
-        <div className="min-w-20" style={{marginRight: date.connected ? 0 : 20}}>
-            <p className="text-center text-sm">{date.date.format("M/D/YY")}</p>
-            {date.top_datetimes.map(t => {
-                if (t) {
-                    return (
-                        <div className="border h-8">
-                            <Cell datetime={t} column={i} />
-                        </div>
-                    )
-                } else {
-                    return <div className={`border h-8 bg-slate-600`} />
-                }
+        <div className="min-w-20">
+            <p className="text-center text-sm">{date}</p>
+            {top_blocks.map((t, i) => {
+                return (
+                    <div className="border h-8">
+                        <Cell colNum={colNum} rowNum={i} />
+                    </div>
+                )
             })}
             <div style={{marginBottom: 10}} />
-            {date.bottom_datetimes.map(t => {
-                if (t) {
-                    return (
-                        <div className="border h-8">
-                            <Cell datetime={t} column={i} />
-                        </div>
-                    )
-                } else {
-                    return <div className={`border h-8 bg-slate-600`} />
-                }
+            {bottom_blocks.map((t, i) => {
+                return (
+                    <div className="border h-8">
+                        <Cell colNum={colNum} rowNum={i} />
+                    </div>
+                )
             })}
         </div>
     )

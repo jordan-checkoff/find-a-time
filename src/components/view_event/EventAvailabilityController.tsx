@@ -25,7 +25,7 @@ export default function EventAvailabilityController() {
         event: null,
         page: EventAvailabilityPages.VIEW,
         user: null,
-        timezone: dayjs.tz.guess()
+        calendar: null
     }
 
     const reducer = (state: EventAvailabilityInterface, change: ReducerAction<EventAvailabilityActions>) => {
@@ -35,7 +35,8 @@ export default function EventAvailabilityController() {
             return {
                 ...state,
                 loading: false,
-                event: value
+                event: value,
+                calendar: value.get_calendar()
             }
         }
 
@@ -63,6 +64,15 @@ export default function EventAvailabilityController() {
             }
         }
 
+        if (action == EventAvailabilityActions.SET_TIMEZONE) {
+            state.calendar?.update_timezone(value)
+
+            return {
+                ...state,
+                calendar: state.calendar
+            }
+        }
+
         return state
     }
 
@@ -82,7 +92,7 @@ export default function EventAvailabilityController() {
         }
     }, [id])
 
-
+    console.log(state.calendar)
 
     return (
         <ViewEventSections model={state} handleEvent={dispatch} />

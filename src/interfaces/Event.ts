@@ -59,54 +59,8 @@ export default class Event {
         }
     }
 
-    get_calendar(timezone: string) {
-        dayjs.tz.setDefault(timezone)
-
-        const dates: DateInfo[] = []
-        for (let i=0; i < this.start_times.length; i++) {
-            const bottom_datetimes = []
-            const top_datetimes = []
-            const start = this.start_times[i].tz(timezone).utcOffset() != 0 ? this.start_times[i].tz(timezone) : this.start_times[i].utc()
-
-            for (let j=0; j < this.num_blocks; j++) {
-                const datetime = start.add(30*j, "minute")
-                if (datetime.isSame(start, "date")) {
-                    bottom_datetimes.push(datetime)
-                } else {
-                    top_datetimes.push(datetime)
-                }
-            }
-
-            if (dates.length == 0 || !dates[dates.length-1].date.isSame(this.start_times[i], "date")) {
-                dates.push({
-                    date: start.startOf('day'),
-                    top_datetimes: Array(top_datetimes.length).fill(null),
-                    bottom_datetimes: bottom_datetimes,
-                    connected: false
-                })
-                if (dates.length >= 2 && dates[dates.length-2].date.add(1, "day").isSame(dates[dates.length-1].date)) {
-                    dates[dates.length-2].connected = true
-                }
-            } else {
-                dates[dates.length-1].bottom_datetimes = bottom_datetimes
-                dates[dates.length-1].connected = true
-            }
-
-            if (top_datetimes.length > 0) {
-                dates[dates.length-1].connected = true
-                dates.push({
-                    date: start.add(1, "day").startOf('day'),
-                    top_datetimes: top_datetimes,
-                    bottom_datetimes: Array(bottom_datetimes.length).fill(null),
-                    connected: false
-                })
-            }
-        }
-
-        const bottom_datetimes = dates[0].bottom_datetimes
-        const top_datetimes = dates.length > 0 ? dates[1].top_datetimes : dates[0].top_datetimes
-
-        return {dates, top_datetimes, bottom_datetimes}
+    get_calendar() {
+        return new Calendar(this.start_times, this.num_blocks)
     }
 
 
@@ -115,6 +69,82 @@ export default class Event {
         if (x) {
             updateAvailability(this.id, user, x)
         }
+    }
+
+}
+
+
+
+export class Calendar {
+    timezone: string = dayjs.tz.guess()
+    start_times: Array<Dayjs> = []
+    num_blocks: number = -1
+
+    dates: Dayjs[] = []
+    top_blocks: Dayjs[] = []
+    bottom_blocks: Dayjs[] = []
+
+    constructor(start_times: Array<Dayjs>, num_blocks: number) {
+        this.start_times = start_times
+        this.num_blocks = num_blocks
+        this.create_calendar()
+    }
+
+    create_calendar() {
+        this.dates = []
+        this.top_blocks = []
+        this.bottom_blocks = []
+
+        const start = this.start_times[0].tz(this.timezone).utcOffset() != 0 ? this.start_times[0].tz(this.timezone) : this.start_times[0].utc()
+
+        for (let j=0; j < this.num_blocks; j++) {
+            const datetime = start.add(30*j, "minute")
+            if (datetime.isSame(start, "date")) {
+                this.bottom_blocks.push(datetime)
+            } else {
+                this.top_blocks.push(datetime)
+            }
+        }
+
+        for (let i=0; i < this.start_times.length; i++) {
+            const start = this.start_times[i].tz(this.timezone).utcOffset() != 0 ? this.start_times[i].tz(this.timezone) : this.start_times[i].utc()
+            if (this.top_blocks.length == 0) {
+                this.dates.push(start)
+            } else {
+                if (this.dates[-1] != start) {
+                    this.dates.push(start)
+                }
+                this.dates.push(start.add(1, "day"))
+            }
+        }
+
+    }
+
+    update_timezone(timezone: string): void {
+        this.timezone = timezone
+        this.create_calendar()
+    }
+
+    get_dates() {
+        return this.dates.map((d) => d.format("M/D/YY"))
+    }
+
+    get_top_blocks() {
+        return this.top_blocks.map((t) => t.format("h:mm A"))
+    }
+
+    get_bottom_blocks() {
+        return this.bottom_blocks.map((t) => t.format("h:mm A"))
+    }
+
+    get_datetime(row: number, col: number) {
+        let time;
+        if (row < this.top_blocks.length) {
+            time = this.top_blocks[row]
+        } else {
+            time = this.bottom_blocks[row - this.top_blocks.length]
+        }
+        return dayjs(this.dates[col]).hour(time.hour()).minute(time.minute()).valueOf()
     }
 
 }

@@ -1,4 +1,4 @@
-import Event from "./Event"
+import Event, { Calendar } from "./Event"
 
 export enum EventAvailabilityPages {
     VIEW,
@@ -10,5 +10,5 @@ export default interface EventAvailabilityInterface {
     event: Event | null,
     page: EventAvailabilityPages
     user: string | null,
-    timezone: string
+    calendar: Calendar | null
 }
