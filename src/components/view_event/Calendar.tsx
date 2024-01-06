@@ -16,7 +16,8 @@ interface props {
 }
 
 interface datetime {
-    datetime: Dayjs
+    datetime: Dayjs,
+    column: number
 }
 
 interface DateInfo {
@@ -40,7 +41,7 @@ export default function Calendar({Cell, data, timezone}: props) {
                 {bottom_datetimes.map(t => <div className="h-8"><p className="text-sm text-right relative bottom-5">{t ? t.format("h:mm A") : " "}</p></div>)}
             </div>
             <div className="flex overflow-x-auto">
-                {dates.map(d => <Column date={d} Cell={Cell} />)}
+                {dates.map((d, i) => <Column date={d} Cell={Cell} i={i} />)}
             </div>
         </div>
     )
@@ -49,10 +50,11 @@ export default function Calendar({Cell, data, timezone}: props) {
 
 interface ColumnProps {
     date: DateInfo,
-    Cell: ComponentType<datetime>
+    Cell: ComponentType<datetime>,
+    i: number
 }
 
-function Column({date, Cell}: ColumnProps) {
+function Column({date, Cell, i}: ColumnProps) {
 
     return (
         <div className="min-w-20" style={{marginRight: date.connected ? 0 : 20}}>
@@ -61,7 +63,7 @@ function Column({date, Cell}: ColumnProps) {
                 if (t) {
                     return (
                         <div className="border h-8">
-                            <Cell datetime={t} />
+                            <Cell datetime={t} column={i} />
                         </div>
                     )
                 } else {
@@ -73,7 +75,7 @@ function Column({date, Cell}: ColumnProps) {
                 if (t) {
                     return (
                         <div className="border h-8">
-                            <Cell datetime={t} />
+                            <Cell datetime={t} column={i} />
                         </div>
                     )
                 } else {

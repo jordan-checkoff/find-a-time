@@ -4,51 +4,60 @@ import Calendar from "./Calendar";
 import { updateAvailability } from "../../utils/api_calls";
 import { Dayjs } from "dayjs";
 import { Checkbox } from "@mui/material";
+import MVCInterface from "../../interfaces/MVCInterface";
+import { EditCalendarActions, EditCalendarInterface } from "./EditCalendarController";
 
-interface props {
+interface props extends MVCInterface<EditCalendarInterface, EditCalendarActions> {
     data: Event,
     user: string,
     setData: (x: number, y: boolean) => void,
     timezone: string,
-    setUser: (x: null) => void
 }
 
 interface cellProps {
-    datetime: Dayjs
-
+    datetime: Dayjs,
+    column: number
 }
 
 
 
-export default function EditCalendar({data, user, setData, timezone, setUser} : props) {
-
-    const [isSelecting, setIsSelecting] = useState(0);
-
-    const handleMouseDown = (x: number, y: boolean) => {
-        if (y) {
-            setIsSelecting(1);
-        } else {
-            setIsSelecting(2)
-        }
-        setData(x, y)
-    };
-
-    const handleMouseEnter = (x: number, y: boolean) => {
-        if ((isSelecting == 1 && y) || (isSelecting == 2 && !y)) {
-            setData(x, y)
-        }
-      };
+export default function EditCalendar({data, user, setData, timezone, handleEvent, model} : props) {
 
     const handleMouseUp = () => {
-        console.log('a')
-        setIsSelecting(0);
-        data.send_update(user)
-    };
+        handleEvent({action: EditCalendarActions.MOUSE_UP, value: 0})
+    }
+
+    useEffect(() => {
+        if (model.mouseDown) {
+            window.addEventListener("mouseup", handleMouseUp)
+            return () => window.removeEventListener("mouseup", handleMouseUp)
+        }
+    }, [model.mouseDown])
 
 
-    function EditCell({datetime} : cellProps) {
+
+    function EditCell({datetime, column} : cellProps) {
+
+        const handleMouseDown = () => {
+            handleEvent({action: EditCalendarActions.MOUSE_DOWN, value: [datetime.valueOf(), column]})
+        };
 
         const cellRef = useRef<HTMLDivElement>(null)
+
+        const checkHover = (e: any) => {
+            if (cellRef.current) {
+              const mouseOver = cellRef.current.contains(e.target);
+              if (mouseOver) {
+                handleEvent({action: EditCalendarActions.MOUSE_ENTER, value: [datetime.valueOf(), column]})
+              }
+            }
+          };
+
+        useEffect(() => {
+            window.addEventListener("mousemove", checkHover, true);
+
+            return () => window.removeEventListener("mousemove", checkHover, true)
+        }, [])
 
         const ms = datetime.valueOf()
 
@@ -57,9 +66,7 @@ export default function EditCalendar({data, user, setData, timezone, setUser} : 
         return <div
                     className={`flex justify-center h-full`}
                     style={checked ? {backgroundColor: "red"} : {}}
-                    onMouseDown={() => handleMouseDown(ms, !checked)}
-                    onMouseMove={() => handleMouseEnter(ms, !checked)}
-                    onMouseUp={handleMouseUp}  
+                    onMouseDown={handleMouseDown} 
                     ref={cellRef}
                 />
 

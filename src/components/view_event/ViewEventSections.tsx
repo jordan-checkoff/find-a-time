@@ -7,6 +7,7 @@ import ViewCalendar from "./ViewCalendar";
 import LoginForm from "./LoginForm";
 import EditCalendar from "./EditCalendar";
 import { Dayjs } from "dayjs";
+import EditCalendarController from "./EditCalendarController";
 
 
 
@@ -43,7 +44,7 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
                 {model.page == EventAvailabilityPages.VIEW ?
                     <ViewCalendar data={model.event} timezone={model.timezone} />
                     : model.user ?
-                        <EditCalendar data={model.event} user={model.user} setData={updateAvailability} timezone={model.timezone} setUser={setUser}  />
+                        <EditCalendarController data={model.event} user={model.user} setData={updateAvailability} timezone={model.timezone} />
                         : <LoginForm setUser={setUser} />
                 }
             </div>
