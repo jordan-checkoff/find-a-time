@@ -26,6 +26,10 @@ export default function ViewCalendar({data, calendar} : props) {
 
         let pct = users && users.size > 0 ? users.size / data.availability_by_user.size : 0
         pct = Math.round(pct * 100) / 100
+
+        if (!data.availability_by_time.has(datetime)) {
+            return <div className="h-full bg-slate-500" />
+        }
         
         return (
             <>
@@ -44,6 +48,7 @@ export default function ViewCalendar({data, calendar} : props) {
                                     
                                 >
                                     <div className="p-10">
+                                        <p className="font-bold mb-2">{calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A")}</p>
                                         {Array.from(users).map(x => <p>{x}</p>)}
                                     </div>
                                 </Drawer> 

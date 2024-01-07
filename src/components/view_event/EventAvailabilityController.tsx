@@ -12,7 +12,8 @@ export enum EventAvailabilityActions {
     SET_EVENT,
     SET_PAGE,
     SET_USER,
-    SET_TIMEZONE
+    SET_TIMEZONE,
+    UPDATE_AVAILABILITY
 }
 
 export default function EventAvailabilityController() {
@@ -59,6 +60,15 @@ export default function EventAvailabilityController() {
             return {
                 ...state,
                 calendar: state.calendar
+            }
+        }
+
+        if (action == EventAvailabilityActions.UPDATE_AVAILABILITY && state.event && state.user) {
+            state.event.update_availability(value[0], value[1], state.user)
+
+            return {
+                ...state,
+                event: state.event
             }
         }
 

@@ -96,7 +96,7 @@ export class Calendar {
         this.top_blocks = []
         this.bottom_blocks = []
 
-        const start = this.start_times[0].tz(this.timezone).utcOffset() != 0 ? this.start_times[0].tz(this.timezone) : this.start_times[0].utc()
+        const start = dayjs(this.start_times[0]).tz(this.timezone).utcOffset() != 0 ? dayjs(this.start_times[0]).tz(this.timezone) : dayjs(this.start_times[0]).utc()
 
         for (let j=0; j < this.num_blocks; j++) {
             const datetime = start.add(30*j, "minute")
@@ -112,7 +112,7 @@ export class Calendar {
             if (this.top_blocks.length == 0) {
                 this.dates.push(start)
             } else {
-                if (this.dates[-1] != start) {
+                if (i == 0 || this.dates[this.dates.length-1] != start) {
                     this.dates.push(start)
                 }
                 this.dates.push(start.add(1, "day"))
@@ -138,14 +138,18 @@ export class Calendar {
         return this.bottom_blocks.map((t) => t.format("h:mm A"))
     }
 
-    get_datetime(row: number, col: number) {
+    get_dayjs(row: number, col: number) {
         let time;
         if (row < this.top_blocks.length) {
             time = this.top_blocks[row]
         } else {
             time = this.bottom_blocks[row - this.top_blocks.length]
         }
-        return dayjs(this.dates[col]).hour(time.hour()).minute(time.minute()).valueOf()
+        return dayjs(this.dates[col]).hour(time.hour()).minute(time.minute())
+    }
+
+    get_datetime(row: number, col: number) {
+        return this.get_dayjs(row, col).valueOf()
     }
 
     get_datetimes(startRow: number, endRow: number, startCol: number, endCol: number) {

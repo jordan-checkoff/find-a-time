@@ -9,7 +9,8 @@ import { Calendar as C } from "../../interfaces/Event";
 interface props {
     data: Event,
     user: string,
-    calendar: C
+    calendar: C,
+    updateAvailability: (x: number[], y: boolean) => void
 }
 
 export enum EditCalendarActions {
@@ -27,7 +28,7 @@ export interface EditCalendarInterface {
     endCol: number
 }
 
-export default function EditCalendarController({data, user, calendar}: props) {
+export default function EditCalendarController({data, user, calendar, updateAvailability}: props) {
 
     const intialState: EditCalendarInterface = {
         mouseDown: false,
@@ -70,7 +71,7 @@ export default function EditCalendarController({data, user, calendar}: props) {
         if (action == EditCalendarActions.MOUSE_UP) {
             if (state.mouseDown) {
                 const datetimes = calendar.get_datetimes(state.startRow, state.endRow, state.startCol, state.endCol)
-                data.update_availability(datetimes, state.adding, user)
+                updateAvailability(datetimes, state.adding)
                 return {
                     ...state,
                     mouseDown: false,

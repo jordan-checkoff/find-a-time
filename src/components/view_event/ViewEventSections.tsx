@@ -26,12 +26,33 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
         handleEvent({action: EventAvailabilityActions.SET_TIMEZONE, value: x})
     }
 
+    const updateAvailability = (x: number[], y: boolean) => {
+        handleEvent({action: EventAvailabilityActions.UPDATE_AVAILABILITY, value: [x, y]})
+    }
+
     if (model.loading) {
         return <p>Loading...</p>
     }
 
     if (!model.event || !model.calendar) {
         return <p>Error</p>
+    }
+
+    if (window.innerWidth > 1000) {
+        return (
+            <div className="grid grid-cols-2 gap-4 p-8 items-center">
+                {model.user ?
+                        <EditCalendarController data={model.event} user={model.user} calendar={model.calendar} updateAvailability={updateAvailability} />
+                        : <div className="px-12"><LoginForm setUser={setUser} /></div>
+                }
+                <div>
+                    <div className="mb-4">
+                        <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
+                    </div>
+                    <ViewCalendar data={model.event} calendar={model.calendar} />
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -49,7 +70,7 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
                 {model.page == EventAvailabilityPages.VIEW ?
                     <ViewCalendar data={model.event} calendar={model.calendar} />
                     : model.user ?
-                        <EditCalendarController data={model.event} user={model.user} calendar={model.calendar} />
+                        <EditCalendarController data={model.event} user={model.user} calendar={model.calendar} updateAvailability={updateAvailability} />
                         : <LoginForm setUser={setUser} />
                 }
             </div>

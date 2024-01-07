@@ -50,6 +50,10 @@ export default function EditCalendar({data, user, calendar, handleEvent, model} 
         const minRow = Math.min(model.startRow, model.endRow)
         const maxRow = Math.max(model.startRow, model.endRow)
 
+        if (!data.availability_by_time.has(ms)) {
+            return <div className="h-full bg-slate-500" />
+        }
+
         if (colNum >= minCol && colNum <= maxCol && rowNum >= minRow && rowNum <= maxRow) {
             checked = model.adding
         }

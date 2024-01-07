@@ -4,6 +4,7 @@ import dayjs, { Dayjs } from "dayjs"
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import Event, { Calendar as C } from "../../interfaces/Event";
+import Button from "../common/Button";
 
 
 dayjs.extend(utc)
@@ -32,73 +33,37 @@ export default function Calendar({Cell, data, calendar}: props) {
         setStart(start-1)
     }
 
+    const numCols = Math.floor((window.innerWidth - 100) / 64)
+
 
     return (
-        <div className="flex pb-10 w-full">
-            <div style={{display: "grid", gridTemplateRows: `30px repeat(${calendar.bottom_blocks.length+calendar.top_blocks.length}, 30px)`, gridTemplateColumns: `100px repeat(${Math.min(3, calendar.dates.length)}, 4rem) 50px`}} className="overflow-x-scroll">
-                {start > 0 ? <button onClick={decrement}>&lt;</button> : <div />}
-                {calendar.get_dates().slice(start, start+3).map(d => <p className="self-start bg-white h-full z-25">{d}</p>)}
-                {start + 3 < calendar.dates.length ? <button onClick={increment}>&gt;</button> : <div />}
+        <div className="pb-10 w-full" style={{userSelect: "none"}}>
+            {calendar.dates.length > numCols 
+            &&
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                    <Button onClick={decrement} text="<" disabled={start == 0} />
+                    <Button onClick={increment} text=">" disabled={start + numCols >= calendar.dates.length} />
+                </div>
+            }
+            <div style={{display: "grid", gridTemplateRows: `30px repeat(${calendar.bottom_blocks.length+calendar.top_blocks.length}, 30px)`, gridTemplateColumns: `80px repeat(${Math.min(numCols, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
+                <div />
+                {calendar.get_dates().slice(start, start+numCols).map(d => <p className="text-center text-sm">{d}</p>)}
                 {calendar.get_top_blocks().map((t, i) => {
-                    const output = [<p>{t}</p>]
-                    calendar.dates.slice(start, start+3).forEach((d, j) => {
-                        output.push(<Cell colNum={j} rowNum={i} />)
+                    const output = [<p className="text-sm text-right pr-4">{t}</p>]
+                    calendar.dates.slice(start, start+numCols).forEach((d, j) => {
+                        output.push(<div className="border-2"><Cell colNum={j + start} rowNum={i} /></div>)
                     })
-                    output.push(<p></p>)
                     return output
                 })}
                 {calendar.get_bottom_blocks().map((t, i) => {
-                    const output = [<p className="bg-white">{t}</p>]
-                    calendar.dates.slice(start, start+3).forEach((d, j) => {
+                    const output = [<p className="text-sm text-right pr-4">{t}</p>]
+                    calendar.dates.slice(start, start+numCols).forEach((d, j) => {
                         output.push(<div className="border-2"><Cell colNum={j + start} rowNum={i + calendar.top_blocks.length} /></div>)
                     })
-                    output.push(<p></p>)
                     return output
-
                 })}
             </div>
-            {/* <div className="flex overflow-x-auto">
-                <div className="min-w-16 mr-4 sticky">
-                    <div className="h-8" />
-                    {calendar.get_top_blocks().map(t => <div className="h-8"><p className="text-xs">{t}</p></div>)}
-                    <div style={{marginBottom: 10}} />
-                    {calendar.get_bottom_blocks().map(t => <div className="h-8"><p className="text-sm text-right relative bottom-5">{t}</p></div>)}
-                </div>
-                {calendar.get_dates().map((d, i) => <Column Cell={Cell} date={d} top_blocks={calendar.get_top_blocks()} bottom_blocks={calendar.get_bottom_blocks()} colNum={i} />)}
-            </div> */}
         </div>
     )
 }
 
-
-interface ColumnProps {
-    Cell: ComponentType<datetime>,
-    top_blocks: string[],
-    bottom_blocks: string[],
-    colNum: number,
-    date: string
-}
-
-function Column({bottom_blocks, Cell, colNum, top_blocks, date}: ColumnProps) {
-
-    return (
-        <div className="min-w-20">
-            <p className="text-center text-sm">{date}</p>
-            {top_blocks.map((t, i) => {
-                return (
-                    <div className="border h-8 pinch-zoom">
-                        <Cell colNum={colNum} rowNum={i} />
-                    </div>
-                )
-            })}
-            <div style={{marginBottom: 10}} />
-            {bottom_blocks.map((t, i) => {
-                return (
-                    <div className="border h-8 s-pinch-zoom">
-                        <Cell colNum={colNum} rowNum={i} />
-                    </div>
-                )
-            })}
-        </div>
-    )
-}
