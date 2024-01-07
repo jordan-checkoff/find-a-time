@@ -58,11 +58,8 @@ export default function EditCalendar({data, user, calendar, handleEvent, model} 
                 <div
                 className={`flex justify-center h-full touch-pinch-zoom`}
                 style={checked ? {backgroundColor: "red"} : {}}
-                // onTouchStart={(e) => handleTouchStart(e, rowNum, colNum)}
                 onPointerDown={() => handleMouseDown(rowNum, colNum)}
-                // onMouseOver={() => handleMouseOver(rowNum, colNum)}
                 onPointerMove={(e) => handleMouseOver(rowNum, colNum)}
-                // on={handleMouseUp}
                 />
         )
     

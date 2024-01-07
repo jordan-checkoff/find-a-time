@@ -42,7 +42,10 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
             </Tabs>
 
             <div className="p-4">
-                <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
+                <div className="mb-4">
+                    <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
+                </div>
+
                 {model.page == EventAvailabilityPages.VIEW ?
                     <ViewCalendar data={model.event} calendar={model.calendar} />
                     : model.user ?

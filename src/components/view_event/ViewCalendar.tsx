@@ -24,7 +24,7 @@ export default function ViewCalendar({data, calendar} : props) {
         const users = data.availability_by_time.get(datetime)
         const [open, setOpen] = useState(false)
 
-        let pct = users ? users.size / data.availability_by_user.size : 0
+        let pct = users && users.size > 0 ? users.size / data.availability_by_user.size : 0
         pct = Math.round(pct * 100) / 100
         
         return (
