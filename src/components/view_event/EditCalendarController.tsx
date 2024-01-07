@@ -9,7 +9,6 @@ import { Calendar as C } from "../../interfaces/Event";
 interface props {
     data: Event,
     user: string,
-    setData: (x: number, y: boolean) => void,
     calendar: C
 }
 
@@ -28,7 +27,7 @@ export interface EditCalendarInterface {
     endCol: number
 }
 
-export default function EditCalendarController({data, user, setData, calendar}: props) {
+export default function EditCalendarController({data, user, calendar}: props) {
 
     const intialState: EditCalendarInterface = {
         mouseDown: false,
@@ -42,49 +41,53 @@ export default function EditCalendarController({data, user, setData, calendar}: 
     const reducer = (state: EditCalendarInterface, x: ReducerAction<number>) => {
         const {action, value} = x
         if (action == EditCalendarActions.MOUSE_DOWN) {
-            const adding = !data.availability_by_user.get(user)?.has(value)
-            data.update_availability(user, adding, value)
+
+            const ms = calendar.get_datetime(value[0], value[1])
+            const adding = !data.availability_by_user.get(user)?.has(ms)
             return {
                 ...state,
                 mouseDown: true,
-                adding: adding
+                adding: adding,
+                startCol: value[1],
+                endCol: value[1],
+                startRow: value[0],
+                endRow: value[0]
             }
         }
+
+        if (action == EditCalendarActions.MOUSE_ENTER) {
+            if (state.mouseDown) {
+                return {
+                    ...state,
+                    endRow: value[0],
+                    endCol: value[1]
+                }
+            }
+
+        }
+
 
         if (action == EditCalendarActions.MOUSE_UP) {
-            // data.send_update(user)
-            return {
-                ...state,
-                mouseDown: false
+            if (state.mouseDown) {
+                const datetimes = calendar.get_datetimes(state.startRow, state.endRow, state.startCol, state.endCol)
+                data.update_availability(datetimes, state.adding, user)
+                return {
+                    ...state,
+                    mouseDown: false,
+                    startRow: -1,
+                    startCol: -1,
+                    endRow: -1,
+                    endCol: -1
+                }
             }
         }
-
-        // if (action == EditCalendarActions.MOUSE_ENTER && state.mouseDown && state.hover != value[0]) {
-        //     if (value[1] == state.column && Math.abs(value[0] - state.hover) == 30*60*1000) {
-        //         if (state.selected.length > 1 && state.selected[state.selected.length-2] == value[0]) {
-        //             data.update_availability(user, !state.adding, state.selected[state.selected.length-1])
-        //             state.selected.pop()
-        //         } else {
-        //             data.update_availability(user, state.adding, value[0])
-        //             state.selected.push(value[0])
-        //         }
-
-        //         return {
-        //             ...state,
-        //             hover: value[0],
-        //             selected: state.selected
-        //         }
-        //     }
-        // }
 
         return state
     }
 
     const [state, dispatch] = useReducer(reducer, intialState)
 
-    console.log(state)
-
     return (
-        <EditCalendar model={state} handleEvent={dispatch} data={data} user={user} setData={setData} calendar={calendar} />
+        <EditCalendar model={state} handleEvent={dispatch} data={data} user={user} calendar={calendar} />
     )
 }

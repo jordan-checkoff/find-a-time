@@ -11,7 +11,6 @@ import { Calendar as C } from "../../interfaces/Event";
 interface props extends MVCInterface<EditCalendarInterface, EditCalendarActions> {
     data: Event,
     user: string,
-    setData: (x: number, y: boolean) => void,
     calendar: C
 }
 
@@ -22,30 +21,51 @@ interface cellProps {
 
 
 
-export default function EditCalendar({data, user, setData, calendar, handleEvent, model} : props) {
+export default function EditCalendar({data, user, calendar, handleEvent, model} : props) {
 
-    // const handleMouseDown = (x: number) => {
-    //     handleEvent({action: EditCalendarActions.MOUSE_DOWN, value: x})
-    // }
+    const handleMouseDown = (row: number, col: number) => {
+        handleEvent({action: EditCalendarActions.MOUSE_DOWN, value: [row, col]})
+    }
+    const handleMouseOver = (row: number, col: number) => {
+        if (model.mouseDown) {
+            handleEvent({action: EditCalendarActions.MOUSE_ENTER, value: [row, col]})
+        }
+    }
 
-    // const handleMouseUp = (x: number) => {
-    //     handleEvent({action: EditCalendarActions.MOUSE_UP, value: x})
-    // }
+    const handleMouseUp = () => {
+        handleEvent({action: EditCalendarActions.MOUSE_UP, value: 0})
+    }
 
+    document.onpointerup = handleMouseUp;
 
 
     function EditCell({colNum, rowNum} : cellProps) {
 
         const ms = calendar.get_datetime(rowNum, colNum)
 
-        const checked = data.availability_by_time.get(ms)?.has(user)
+        let checked = data.availability_by_time.get(ms)?.has(user)
 
-        return <div
-                    className={`flex justify-center h-full`}
-                    style={checked ? {backgroundColor: "red"} : {}}
-                    // onMouseDown={() => handleMouseDown(ms)}
-                    // onMouseUp={() => handleMouseUp(ms)}
+        const minCol = Math.min(model.startCol, model.endCol)
+        const maxCol = Math.max(model.startCol, model.endCol)
+        const minRow = Math.min(model.startRow, model.endRow)
+        const maxRow = Math.max(model.startRow, model.endRow)
+
+        if (colNum >= minCol && colNum <= maxCol && rowNum >= minRow && rowNum <= maxRow) {
+            checked = model.adding
+        }
+
+        return (
+                <div
+                className={`flex justify-center h-full touch-pinch-zoom`}
+                style={checked ? {backgroundColor: "red"} : {}}
+                // onTouchStart={(e) => handleTouchStart(e, rowNum, colNum)}
+                onPointerDown={() => handleMouseDown(rowNum, colNum)}
+                // onMouseOver={() => handleMouseOver(rowNum, colNum)}
+                onPointerMove={(e) => handleMouseOver(rowNum, colNum)}
+                // on={handleMouseUp}
                 />
+        )
+    
 
     }
 

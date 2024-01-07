@@ -22,10 +22,6 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
         handleEvent({action: EventAvailabilityActions.SET_USER, value: x})
     }
 
-    const updateAvailability = (x: number, y: boolean) => {
-        handleEvent({action: EventAvailabilityActions.UPDATE_AVAILABILITY, value: {datetime: x, selected: y}})
-    }
-
     const setTimezone = (x: string) => {
         handleEvent({action: EventAvailabilityActions.SET_TIMEZONE, value: x})
     }
@@ -50,7 +46,7 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
                 {model.page == EventAvailabilityPages.VIEW ?
                     <ViewCalendar data={model.event} calendar={model.calendar} />
                     : model.user ?
-                        <EditCalendarController data={model.event} user={model.user} setData={updateAvailability} calendar={model.calendar} />
+                        <EditCalendarController data={model.event} user={model.user} calendar={model.calendar} />
                         : <LoginForm setUser={setUser} />
                 }
             </div>

@@ -45,30 +45,31 @@ export default class Event {
         })
     }
 
-    update_availability(user: string, selected: boolean, datetime: number) {
+    update_availability(datetimes: number[], adding: boolean, user: string) {
         if (!this.availability_by_user.has(user)) {
             this.availability_by_user.set(user, new Set())
         }
 
-        if (selected) {
-            this.availability_by_user.get(user)?.add(datetime)
-            this.availability_by_time.get(datetime)?.add(user)
+        if (adding) {
+            datetimes.forEach(x => {
+                this.availability_by_user.get(user)?.add(x)
+                this.availability_by_time.get(x)?.add(user)
+            })
         } else {
-            this.availability_by_user.get(user)?.delete(datetime)
-            this.availability_by_time.get(datetime)?.delete(user)
+            datetimes.forEach(x => {
+                this.availability_by_user.get(user)?.delete(x)
+                this.availability_by_time.get(x)?.delete(user)
+            })
+        }
+
+        const x = this.availability_by_user.get(user)
+        if (x) {
+            updateAvailability(this.id, user, x)
         }
     }
 
     get_calendar() {
         return new Calendar(this.start_times, this.num_blocks)
-    }
-
-
-    send_update(user: string) {
-        const x = this.availability_by_user.get(user)
-        if (x) {
-            updateAvailability(this.id, user, x)
-        }
     }
 
 }
@@ -145,6 +146,22 @@ export class Calendar {
             time = this.bottom_blocks[row - this.top_blocks.length]
         }
         return dayjs(this.dates[col]).hour(time.hour()).minute(time.minute()).valueOf()
+    }
+
+    get_datetimes(startRow: number, endRow: number, startCol: number, endCol: number) {
+        const minCol = Math.min(startCol, endCol)
+        const maxCol = Math.max(startCol, endCol)
+        const minRow = Math.min(startRow, endRow)
+        const maxRow = Math.max(startRow, endRow)
+
+        const datetimes = []
+
+        for (let i=0; i < maxRow-minRow+1; i++) {
+            for (let j=0; j < maxCol - minCol + 1; j++) {
+                datetimes.push(this.get_datetime(minRow+i, minCol+j))
+            }
+        }
+        return datetimes
     }
 
 }

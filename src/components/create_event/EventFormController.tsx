@@ -37,8 +37,6 @@ export default function EventFormController() {
             if (num_blocks < 0) {
                 num_blocks += 48
             }
-
-          console.log(start_times, num_blocks, data.timezone)
     
           const res = await createEvent({title: data.title, start_times: start_times, num_blocks: num_blocks})
           if (res.statusCode != 200) {

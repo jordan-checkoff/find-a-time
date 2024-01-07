@@ -12,7 +12,6 @@ export enum EventAvailabilityActions {
     SET_EVENT,
     SET_PAGE,
     SET_USER,
-    UPDATE_AVAILABILITY,
     SET_TIMEZONE
 }
 
@@ -54,16 +53,6 @@ export default function EventAvailabilityController() {
             }
         }
 
-        if (action == EventAvailabilityActions.UPDATE_AVAILABILITY && state.event && state.user) {
-
-            state.event.update_availability(state.user, value.selected, value.datetime)
-
-            return {
-                ...state,
-                event: state.event
-            }
-        }
-
         if (action == EventAvailabilityActions.SET_TIMEZONE) {
             state.calendar?.update_timezone(value)
 
@@ -91,8 +80,6 @@ export default function EventAvailabilityController() {
             fetchEvent(id)
         }
     }, [id])
-
-    console.log(state.calendar)
 
     return (
         <ViewEventSections model={state} handleEvent={dispatch} />
