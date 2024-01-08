@@ -7,13 +7,6 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-interface DateInfo {
-    date: Dayjs
-    top_datetimes: (Dayjs | null)[]
-    bottom_datetimes: (Dayjs | null)[]
-    connected: boolean
-}
-
 
 export default class Event {
     id: string = "";
@@ -166,6 +159,17 @@ export class Calendar {
             }
         }
         return datetimes
+    }
+
+    get_breaks() {
+        const breaks = new Set()
+        for (let i=0; i < this.dates.length-1; i++) {
+            if (!this.dates[i].add(1, "day").isSame(this.dates[i+1]))  {
+                breaks.add(i)
+            }
+        }
+
+        return breaks
     }
 
 }
