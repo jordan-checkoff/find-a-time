@@ -6,7 +6,7 @@ export default function App() {
 
     return (
         <div>
-            <div className="min-h-[90vh]">
+            <div className="min-h-[calc(100vh-48px)]">
                 <header className="py-6 px-8 border-b-2">
                     <img src={logo} className="w-48" />
                 </header>

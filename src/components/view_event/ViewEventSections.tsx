@@ -2,13 +2,15 @@ import MVCInterface from "../../interfaces/MVCInterface";
 import EventAvailabilityInterface, { EventAvailabilityPages } from "../../interfaces/EventAvailabilityInterface";
 import { EventAvailabilityActions } from "./EventAvailabilityController";
 import { ReducerAction } from "../../interfaces/interfaces";
-import { Tabs, Tab } from "@mui/material";
+import { Tabs, Tab, Dialog } from "@mui/material";
 import ViewCalendar from "./ViewCalendar";
 import LoginForm from "./LoginForm";
 import EditCalendar from "./EditCalendar";
 import { Dayjs } from "dayjs";
 import EditCalendarController, { EditCalendarActions } from "./EditCalendarController";
 import TimezoneInput from "../common/TimezoneInput";
+import Button from "../common/Button";
+import { useState } from "react";
 
 interface props extends MVCInterface<EventAvailabilityInterface, EventAvailabilityActions> {
     handleEvent2: any,
@@ -18,6 +20,8 @@ interface props extends MVCInterface<EventAvailabilityInterface, EventAvailabili
 
 
 export default function ViewEventSections({model, handleEvent, model2, handleEvent2}: props) {
+
+    const [copied, setCopied] = useState(false)
 
     const setPage = (x: EventAvailabilityPages) => {
         handleEvent({action: EventAvailabilityActions.SET_PAGE, value: x})
@@ -35,6 +39,12 @@ export default function ViewEventSections({model, handleEvent, model2, handleEve
         handleEvent2({action: x, value: [y, z]})
     }
 
+    const addToClipboard = () => {
+        window.navigator.clipboard.writeText(window.location.href);
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
+
     if (model.loading) {
         return <p>Loading...</p>
     }
@@ -45,23 +55,32 @@ export default function ViewEventSections({model, handleEvent, model2, handleEve
 
     if (window.innerWidth > 1000) {
         return (
-            <div className="grid grid-cols-2 gap-4 p-8">
+            <div className="p-8">
+            <p className="text-2xl font-bold">{model.event.title}</p>
+
+            <div className="grid grid-cols-2 gap-4">
+
                 <div>
-                    <p className="text-2xl mt-2 mb-8 font-bold">{model.event.title}</p>
+                    <div className="mb-6 mt-6">
+                        {copied && <p className="text-xs">Copied to clipboard</p>}
+                        <Button text={"Share Event"} onClick={addToClipboard} />
+                    </div>
                     {model.user ?
                             <EditCalendar data={model.event} updateCalendar={updateCalendar} model={model2} handleEvent={() => {}} user={model.user} calendar={model.calendar} />
                             : <div className="px-12"><LoginForm setUser={setUser} /></div>
                     }
                 </div>
                 <div>
-                    <div className="mb-4">
+                    <div className="mb-6">
                         <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
                     </div>
                     <ViewCalendar data={model.event} calendar={model.calendar} />
                 </div>
             </div>
+            </div>
         )
     }
+
 
     return (
         <>
@@ -72,9 +91,13 @@ export default function ViewEventSections({model, handleEvent, model2, handleEve
 
             <p className="text-2xl mt-2 pt-4 px-4 font-bold">{model.event.title}</p>
 
-            <div className="p-4">
-                <div className="mb-4">
+            <div className="p-4 pt-2">
+                <div className="mb-2">
                     <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
+                </div>
+                <div className="mb-4">
+                    {copied && <p className="text-xs">Copied to clipboard</p>}
+                    <Button text={"Share Event"} onClick={addToClipboard} />
                 </div>
 
                 {model.page == EventAvailabilityPages.VIEW ?
