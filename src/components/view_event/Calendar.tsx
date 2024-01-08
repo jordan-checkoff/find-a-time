@@ -33,14 +33,14 @@ export default function Calendar({Cell, data, calendar}: props) {
         setStart(start-1)
     }
 
-    const numCols = Math.floor((window.innerWidth - 100) / 64)
+    const numCols = window.innerWidth > 1000 ? calendar.dates.length : Math.floor((window.innerWidth - 100) / 64)
 
     console.log(calendar.get_breaks())
 
 
     return (
         <div className="pb-10 w-full" style={{userSelect: "none"}}>
-            {calendar.dates.length > numCols 
+            {calendar.dates.length > numCols && window.innerWidth < 1000
             &&
                 <div className="grid grid-cols-2 gap-2 mb-4">
                     <Button onClick={decrement} text="<" disabled={start == 0} />
@@ -51,14 +51,14 @@ export default function Calendar({Cell, data, calendar}: props) {
                 <div />
                 {calendar.get_dates().slice(start, start+numCols).map(d => <p className="text-center text-sm">{d}</p>)}
                 {calendar.get_top_blocks().map((t, i) => {
-                    const output = [<p className="text-sm text-right pr-4">{t}</p>]
+                    const output = [<p className="text-sm text-right pr-4 -mt-2">{t}</p>]
                     calendar.dates.slice(start, start+numCols).forEach((d, j) => {
                         output.push(<div style={{marginRight: calendar.get_breaks().has(j + start) ? 10 : 0}} className="border-2"><Cell colNum={j + start} rowNum={i} /></div>)
                     })
                     return output
                 })}
                 {calendar.get_bottom_blocks().map((t, i) => {
-                    const output = [<p className="text-sm text-right pr-4">{t}</p>]
+                    const output = [<p className="text-sm text-right pr-4 -mt-2">{t}</p>]
                     calendar.dates.slice(start, start+numCols).forEach((d, j) => {
                         output.push(<div style={{marginRight: calendar.get_breaks().has(j + start) ? 10 : 0}} className="border-2"><Cell colNum={j + start} rowNum={i + calendar.top_blocks.length} /></div>)
                     })

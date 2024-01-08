@@ -34,7 +34,7 @@ export default function EventFormController() {
         if (starttime && endtime) {
             const start_times = data.dates.map(x => x.hour(starttime.hour()).startOf('hour').tz(data.timezone, true).valueOf())
             let num_blocks = (endtime.hour() - starttime.hour()) * 2
-            if (num_blocks < 0) {
+            if (num_blocks <= 0) {
                 num_blocks += 48
             }
     
