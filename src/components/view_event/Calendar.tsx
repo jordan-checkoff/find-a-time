@@ -53,14 +53,14 @@ export default function Calendar({Cell, data, calendar}: props) {
                 {calendar.get_top_blocks().map((t, i) => {
                     const output = [<p className="text-sm text-right pr-4">{t}</p>]
                     calendar.dates.slice(start, start+numCols).forEach((d, j) => {
-                        output.push(<div className="border-2"><Cell colNum={j + start} rowNum={i} /></div>)
+                        output.push(<div style={{marginRight: calendar.get_breaks().has(j + start) ? 10 : 0}} className="border-2"><Cell colNum={j + start} rowNum={i} /></div>)
                     })
                     return output
                 })}
                 {calendar.get_bottom_blocks().map((t, i) => {
                     const output = [<p className="text-sm text-right pr-4">{t}</p>]
                     calendar.dates.slice(start, start+numCols).forEach((d, j) => {
-                        output.push(<div style={{marginRight: calendar.get_breaks().has(j + start) ? 10 : 0}} className="border-2 mr-2"><Cell colNum={j + start} rowNum={i + calendar.top_blocks.length} /></div>)
+                        output.push(<div style={{marginRight: calendar.get_breaks().has(j + start) ? 10 : 0}} className="border-2"><Cell colNum={j + start} rowNum={i + calendar.top_blocks.length} /></div>)
                     })
                     return output
                 })}
