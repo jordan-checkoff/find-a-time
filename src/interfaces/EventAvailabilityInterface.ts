@@ -11,6 +11,5 @@ export default interface EventAvailabilityInterface {
     event: Event | null,
     page: EventAvailabilityPages
     user: string | null,
-    calendar: Calendar | null,
-    calendarState: EditCalendarInterface
+    calendar: Calendar | null
 }

@@ -27,7 +27,7 @@ export enum EventAvailabilityActions {
     SET_PAGE,
     SET_USER,
     SET_TIMEZONE,
-    EDIT_CALENDAR
+    EDIT_AVAILABILITY
 }
 
 export default function EventAvailabilityController() {
@@ -40,17 +40,10 @@ export default function EventAvailabilityController() {
         page: EventAvailabilityPages.VIEW,
         user: null,
         calendar: null,
-        calendarState: {
-            mouseDown: false,
-            adding: true,
-            startRow: -1,
-            endRow: -1,
-            startCol: -1,
-            endCol: -1
-        }
     }
 
     const reducer = (state: EventAvailabilityInterface, change: ReducerAction<EventAvailabilityActions>) => {
+        console.log(1)
         const {action, value} = change
 
         if (action == EventAvailabilityActions.SET_EVENT) {
@@ -85,59 +78,8 @@ export default function EventAvailabilityController() {
             }
         }
 
-        if (action == EventAvailabilityActions.EDIT_CALENDAR && state.calendar && state.event && state.user) {
-            if (value[0] == EditCalendarActions.MOUSE_DOWN) {
-
-                const ms = state.calendar.get_datetime(value[1], value[2])
-                const adding = !state.event.availability_by_user.get(state.user)?.has(ms)
-                return {
-                    ...state,
-                    calendarState: {
-                        mouseDown: true,
-                        adding: adding,
-                        startCol: value[2],
-                        endCol: value[2],
-                        startRow: value[1],
-                        endRow: value[1]
-                    }
-                }
-            }
-    
-            if (value[0] == EditCalendarActions.MOUSE_ENTER) {
-                if (state.calendarState.mouseDown) {
-                    return {
-                        ...state,
-                        calendarState: {
-                            ...state.calendarState,
-                            endRow: value[1],
-                            endCol: value[2]
-                        }
-                    }
-                }
-    
-            }
-    
-    
-            if (value[0] == EditCalendarActions.MOUSE_UP) {
-                if (state.calendarState.mouseDown) {
-                    const datetimes = state.calendar.get_datetimes(state.calendarState.startRow, state.calendarState.endRow, state.calendarState.startCol, state.calendarState.endCol)
-                    state.event.update_availability(datetimes, state.calendarState.adding, state.user)
-
-                    return {
-                        ...state,
-                        event: state.event,
-                        calendarState: {
-                            ...state.calendarState,
-                            mouseDown: false,
-                            startRow: -1,
-                            startCol: -1,
-                            endRow: -1,
-                            endCol: -1
-
-                        }
-                    }
-                }
-            }
+        if (action == EventAvailabilityActions.EDIT_AVAILABILITY && state.event && state.user) {
+            state.event.update_availability(value[0], value[1], state.user)
         }
 
         return state
@@ -152,6 +94,67 @@ export default function EventAvailabilityController() {
         dispatch({action: EventAvailabilityActions.SET_EVENT, value: event})
     }
 
+    const initialState2: EditCalendarInterface = {
+        mouseDown: false,
+        adding: true,
+        startRow: -1,
+        endRow: -1,
+        startCol: -1,
+        endCol: -1
+    }
+
+    const reducer2 = (statee: EditCalendarInterface, changee: ReducerAction<EditCalendarActions>) => {
+        console.log(2)
+        const {action, value} = changee
+        if (action == EditCalendarActions.MOUSE_DOWN) {
+
+            const ms = state.calendar.get_datetime(value[0], value[1])
+            const adding = !state.event.availability_by_user.get(state.user)?.has(ms)
+            return {
+                ...statee,
+                mouseDown: true,
+                adding: adding,
+                startCol: value[1],
+                endCol: value[1],
+                startRow: value[0],
+                endRow: value[0]
+            }
+        }
+
+        if (action == EditCalendarActions.MOUSE_ENTER) {
+            if (statee.mouseDown) {
+                return {
+                    ...statee,
+                    endRow: value[0],
+                    endCol: value[1]
+                }
+            }
+
+        }
+
+
+        if (action == EditCalendarActions.MOUSE_UP) {
+            if (statee.mouseDown) {
+                const datetimes = state.calendar.get_datetimes(statee.startRow, statee.endRow, statee.startCol, statee.endCol)
+
+                dispatch({action: EventAvailabilityActions.EDIT_AVAILABILITY, value: [datetimes, statee.adding]})
+
+                return {
+                    ...statee,
+                    mouseDown: false,
+                    startRow: -1,
+                    startCol: -1,
+                    endRow: -1,
+                    endCol: -1
+                }
+            }
+        }
+
+        return statee
+    }
+
+    const [calendarState, calendarDispatch] = useReducer(reducer2, initialState2)
+
 
     useEffect(() => {
         if (id) {
@@ -160,6 +163,6 @@ export default function EventAvailabilityController() {
     }, [id])
 
     return (
-        <ViewEventSections model={state} handleEvent={dispatch} />
+        <ViewEventSections model={state} handleEvent={dispatch} model2={calendarState} handleEvent2={calendarDispatch} />
     )
 }
