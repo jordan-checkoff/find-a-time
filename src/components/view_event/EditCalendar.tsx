@@ -1,7 +1,6 @@
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Event from "../../interfaces/Event";
 import Calendar from "./Calendar";
-import { updateAvailability } from "../../utils/api_calls";
 import { Dayjs } from "dayjs";
 import { Checkbox } from "@mui/material";
 import MVCInterface from "../../interfaces/MVCInterface";
@@ -11,7 +10,8 @@ import { Calendar as C } from "../../interfaces/Event";
 interface props extends MVCInterface<EditCalendarInterface, EditCalendarActions> {
     data: Event,
     user: string,
-    calendar: C
+    calendar: C,
+    updateCalendar: any
 }
 
 interface cellProps {
@@ -21,19 +21,19 @@ interface cellProps {
 
 
 
-export default function EditCalendar({data, user, calendar, handleEvent, model} : props) {
+export default function EditCalendar({data, user, calendar, updateCalendar, handleEvent, model} : props) {
 
     const handleMouseDown = (row: number, col: number) => {
-        handleEvent({action: EditCalendarActions.MOUSE_DOWN, value: [row, col]})
+        updateCalendar(EditCalendarActions.MOUSE_DOWN, row, col)
     }
     const handleMouseOver = (row: number, col: number) => {
         if (model.mouseDown) {
-            handleEvent({action: EditCalendarActions.MOUSE_ENTER, value: [row, col]})
+            updateCalendar(EditCalendarActions.MOUSE_ENTER, row, col)
         }
     }
 
     const handleMouseUp = () => {
-        handleEvent({action: EditCalendarActions.MOUSE_UP, value: 0})
+        updateCalendar(EditCalendarActions.MOUSE_UP, 0, 0)
     }
 
     document.onpointerup = handleMouseUp;

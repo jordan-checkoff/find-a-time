@@ -7,13 +7,27 @@ import EventAvailabilityInterface, { EventAvailabilityPages } from "../../interf
 import ViewEventSections from "./ViewEventSections";
 import Event from "../../interfaces/Event";
 
+export interface EditCalendarInterface {
+    mouseDown: boolean,
+    adding: boolean,
+    startRow: number,
+    endRow: number,
+    startCol: number,
+    endCol: number,
+}
+
+export enum EditCalendarActions {
+    MOUSE_DOWN,
+    MOUSE_UP,
+    MOUSE_ENTER
+}
 
 export enum EventAvailabilityActions {
     SET_EVENT,
     SET_PAGE,
     SET_USER,
     SET_TIMEZONE,
-    UPDATE_AVAILABILITY
+    EDIT_CALENDAR
 }
 
 export default function EventAvailabilityController() {
@@ -25,7 +39,15 @@ export default function EventAvailabilityController() {
         event: null,
         page: EventAvailabilityPages.VIEW,
         user: null,
-        calendar: null
+        calendar: null,
+        calendarState: {
+            mouseDown: false,
+            adding: true,
+            startRow: -1,
+            endRow: -1,
+            startCol: -1,
+            endCol: -1
+        }
     }
 
     const reducer = (state: EventAvailabilityInterface, change: ReducerAction<EventAvailabilityActions>) => {
@@ -63,12 +85,58 @@ export default function EventAvailabilityController() {
             }
         }
 
-        if (action == EventAvailabilityActions.UPDATE_AVAILABILITY && state.event && state.user) {
-            state.event.update_availability(value[0], value[1], state.user)
+        if (action == EventAvailabilityActions.EDIT_CALENDAR && state.calendar && state.event && state.user) {
+            if (value[0] == EditCalendarActions.MOUSE_DOWN) {
 
-            return {
-                ...state,
-                event: state.event
+                const ms = state.calendar.get_datetime(value[1], value[2])
+                const adding = !state.event.availability_by_user.get(state.user)?.has(ms)
+                return {
+                    ...state,
+                    calendarState: {
+                        mouseDown: true,
+                        adding: adding,
+                        startCol: value[2],
+                        endCol: value[2],
+                        startRow: value[1],
+                        endRow: value[1]
+                    }
+                }
+            }
+    
+            if (value[0] == EditCalendarActions.MOUSE_ENTER) {
+                if (state.calendarState.mouseDown) {
+                    return {
+                        ...state,
+                        calendarState: {
+                            ...state.calendarState,
+                            endRow: value[1],
+                            endCol: value[2]
+                        }
+                    }
+                }
+    
+            }
+    
+    
+            if (value[0] == EditCalendarActions.MOUSE_UP) {
+                if (state.calendarState.mouseDown) {
+                    const datetimes = state.calendar.get_datetimes(state.calendarState.startRow, state.calendarState.endRow, state.calendarState.startCol, state.calendarState.endCol)
+                    state.event.update_availability(datetimes, state.calendarState.adding, state.user)
+
+                    return {
+                        ...state,
+                        event: state.event,
+                        calendarState: {
+                            ...state.calendarState,
+                            mouseDown: false,
+                            startRow: -1,
+                            startCol: -1,
+                            endRow: -1,
+                            endCol: -1
+
+                        }
+                    }
+                }
             }
         }
 

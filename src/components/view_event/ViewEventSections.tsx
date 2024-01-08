@@ -7,7 +7,7 @@ import ViewCalendar from "./ViewCalendar";
 import LoginForm from "./LoginForm";
 import EditCalendar from "./EditCalendar";
 import { Dayjs } from "dayjs";
-import EditCalendarController from "./EditCalendarController";
+import EditCalendarController, { EditCalendarActions } from "./EditCalendarController";
 import TimezoneInput from "../common/TimezoneInput";
 
 
@@ -26,8 +26,8 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
         handleEvent({action: EventAvailabilityActions.SET_TIMEZONE, value: x})
     }
 
-    const updateAvailability = (x: number[], y: boolean) => {
-        handleEvent({action: EventAvailabilityActions.UPDATE_AVAILABILITY, value: [x, y]})
+    const updateCalendar = (x: EditCalendarActions, y: any, z: any) => {
+        handleEvent({action: EventAvailabilityActions.EDIT_CALENDAR, value: [x, y, z]})
     }
 
     if (model.loading) {
@@ -42,7 +42,7 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
         return (
             <div className="grid grid-cols-2 gap-4 p-8 items-center">
                 {model.user ?
-                        <EditCalendarController data={model.event} user={model.user} calendar={model.calendar} updateAvailability={updateAvailability} />
+                        <EditCalendar data={model.event} updateCalendar={updateCalendar} model={model.calendarState} handleEvent={() => {}} user={model.user} calendar={model.calendar} />
                         : <div className="px-12"><LoginForm setUser={setUser} /></div>
                 }
                 <div>
@@ -70,7 +70,7 @@ export default function ViewEventSections({model, handleEvent}: MVCInterface<Eve
                 {model.page == EventAvailabilityPages.VIEW ?
                     <ViewCalendar data={model.event} calendar={model.calendar} />
                     : model.user ?
-                        <EditCalendarController data={model.event} user={model.user} calendar={model.calendar} updateAvailability={updateAvailability} />
+                        <EditCalendar data={model.event} updateCalendar={updateCalendar} model={model.calendarState} handleEvent={() => {}} user={model.user} calendar={model.calendar} />
                         : <LoginForm setUser={setUser} />
                 }
             </div>
