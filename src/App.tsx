@@ -6,10 +6,17 @@ export default function App() {
 
     return (
         <div>
-            <header className="py-6 px-8 border-b-2">
-                <img src={logo} className="w-48" />
-            </header>
-            <Router />
+            <div className="min-h-[90vh]">
+                <header className="py-6 px-8 border-b-2">
+                    <img src={logo} className="w-48" />
+                </header>
+                <div>
+                    <Router />
+                </div>
+            </div>
+            <footer className="bg-red-200 p-4">
+                <p className="text-xs">Created by Jordan Checkoff | jordan.checkoff@gmail.com</p>
+            </footer>
         </div>
     )
 }
