@@ -46,10 +46,13 @@ export default function ViewEventSections({model, handleEvent, model2, handleEve
     if (window.innerWidth > 1000) {
         return (
             <div className="grid grid-cols-2 gap-4 p-8">
-                {model.user ?
-                        <EditCalendar data={model.event} updateCalendar={updateCalendar} model={model2} handleEvent={() => {}} user={model.user} calendar={model.calendar} />
-                        : <div className="px-12"><LoginForm setUser={setUser} /></div>
-                }
+                <div>
+                    <p className="text-2xl mt-2 mb-8 font-bold">{model.event.title}</p>
+                    {model.user ?
+                            <EditCalendar data={model.event} updateCalendar={updateCalendar} model={model2} handleEvent={() => {}} user={model.user} calendar={model.calendar} />
+                            : <div className="px-12"><LoginForm setUser={setUser} /></div>
+                    }
+                </div>
                 <div>
                     <div className="mb-4">
                         <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
@@ -66,6 +69,8 @@ export default function ViewEventSections({model, handleEvent, model2, handleEve
                 <Tab label="View Availability" value={EventAvailabilityPages.VIEW} style={{ color: 'black', backgroundColor: "#EEE" }} />
                 <Tab label="Edit Availability" value={EventAvailabilityPages.EDIT} style={{ color: 'black', backgroundColor: "#EEE" }} />
             </Tabs>
+
+            <p className="text-2xl mt-2 pt-4 px-4 font-bold">{model.event.title}</p>
 
             <div className="p-4">
                 <div className="mb-4">
