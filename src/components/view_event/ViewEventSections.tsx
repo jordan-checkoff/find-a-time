@@ -22,6 +22,7 @@ interface props extends MVCInterface<EventAvailabilityInterface, EventAvailabili
 export default function ViewEventSections({model, handleEvent, model2, handleEvent2}: props) {
 
     const [copied, setCopied] = useState(false)
+    const [availability, setAvailability] = useState<any>(1)
 
     const setPage = (x: EventAvailabilityPages) => {
         handleEvent({action: EventAvailabilityActions.SET_PAGE, value: x})
@@ -68,15 +69,27 @@ export default function ViewEventSections({model, handleEvent, model2, handleEve
                 </div>
             <div className="p-8 grid grid-cols-2 gap-4">
                 <div>
-                    <p className="mb-8 text-xl font-bold">Edit Your Availability</p>
-                    {model.user ?
+                    {availability ?
+                         <div>
+                            <p className="text-lg mb-4">{availability.datetime}</p>
+                            <p className="mb-4">{availability.percentage} users available</p>
+                            {availability.people?.map((x: any) => <p>{x}</p>)}
+                         </div>
+                        :
+                        model.user ?
+                        <>
+                                            <p className="mb-8 text-xl font-bold">Edit Your Availability</p>
                             <EditCalendar data={model.event} updateCalendar={updateCalendar} model={model2} handleEvent={() => {}} user={model.user} calendar={model.calendar} />
+                                            
+                                            </>
                             : <div className="px-12"><p className="text-lg mb-4">Log in to edit your availability</p><LoginForm setUser={setUser} /></div>
                     }
+                
+
                 </div>
                 <div>
                     <p className="mb-8 text-xl font-bold">View Group's Availability</p>
-                    <ViewCalendar data={model.event} calendar={model.calendar} />
+                    <ViewCalendar data={model.event} calendar={model.calendar} onHover={setAvailability} />
                 </div>
             </div>
             </div>
