@@ -22,7 +22,7 @@ interface props extends MVCInterface<EventAvailabilityInterface, EventAvailabili
 export default function ViewEventSections({model, handleEvent, model2, handleEvent2}: props) {
 
     const [copied, setCopied] = useState(false)
-    const [availability, setAvailability] = useState<any>(1)
+    const [availability, setAvailability] = useState<any>(null)
 
     const setPage = (x: EventAvailabilityPages) => {
         handleEvent({action: EventAvailabilityActions.SET_PAGE, value: x})
