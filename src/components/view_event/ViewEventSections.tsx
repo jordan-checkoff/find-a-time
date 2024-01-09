@@ -55,25 +55,27 @@ export default function ViewEventSections({model, handleEvent, model2, handleEve
 
     if (window.innerWidth > 1000) {
         return (
-            <div className="p-8">
-            <p className="text-2xl font-bold">{model.event.title}</p>
-
-            <div className="grid grid-cols-2 gap-4">
-
-                <div>
-                    <div className="mb-6 mt-6">
-                        {copied && <p className="text-xs">Copied to clipboard</p>}
-                        <Button text={"Share Event"} onClick={addToClipboard} />
+            <div>
+                <div className="bg-gray-100 flex justify-between px-8 py-4">
+                    <p className="text-2xl self-center">{model.event.title}</p>
+                    <div className="flex items-end gap-4">
+                        <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
+                        <div className="w-40">
+                            {copied && <p className="text-xs">Copied to clipboard</p>}
+                            <Button text={"Share Event"} onClick={addToClipboard} />
+                        </div>
                     </div>
+                </div>
+            <div className="p-8 grid grid-cols-2 gap-4">
+                <div>
+                    <p className="mb-8 text-xl font-bold">Edit Your Availability</p>
                     {model.user ?
                             <EditCalendar data={model.event} updateCalendar={updateCalendar} model={model2} handleEvent={() => {}} user={model.user} calendar={model.calendar} />
-                            : <div className="px-12"><LoginForm setUser={setUser} /></div>
+                            : <div className="px-12"><p className="text-lg mb-4">Log in to edit your availability</p><LoginForm setUser={setUser} /></div>
                     }
                 </div>
                 <div>
-                    <div className="mb-6">
-                        <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
-                    </div>
+                    <p className="mb-8 text-xl font-bold">View Group's Availability</p>
                     <ViewCalendar data={model.event} calendar={model.calendar} />
                 </div>
             </div>
@@ -84,27 +86,33 @@ export default function ViewEventSections({model, handleEvent, model2, handleEve
 
     return (
         <>
+            <div className="py-4 px-8">
+                    <p className="text-2xl mb-6">{model.event.title}</p>
+
+                    <div className="mb-2">
+                        <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} fullWidth={true} />
+                    </div>
+
+                    <div className="mb-2">
+                        {copied && <p className="text-xs">Copied to clipboard</p>}
+                        <Button text={"Share Event"} onClick={addToClipboard} />
+                    </div>
+            </div>
             <Tabs value={model.page} onChange={(e, x) => setPage(x)} style={{borderTop: "1px solid lightgray"}} variant="fullWidth" TabIndicatorProps={{style: {background:'red', height: 3}}}>
-                <Tab label="View Availability" value={EventAvailabilityPages.VIEW} style={{ color: 'black', backgroundColor: "#EEE" }} />
+                <Tab label="Group Availability" value={EventAvailabilityPages.VIEW} style={{ color: 'black', backgroundColor: "#EEE" }} />
                 <Tab label="Edit Availability" value={EventAvailabilityPages.EDIT} style={{ color: 'black', backgroundColor: "#EEE" }} />
             </Tabs>
 
-            <p className="text-2xl mt-2 pt-4 px-4 font-bold">{model.event.title}</p>
-
-            <div className="p-4 pt-2">
-                <div className="mb-2">
-                    <TimezoneInput value={model.calendar.timezone} onChange={setTimezone} />
-                </div>
-                <div className="mb-4">
-                    {copied && <p className="text-xs">Copied to clipboard</p>}
-                    <Button text={"Share Event"} onClick={addToClipboard} />
-                </div>
+            <div className="p-4">
 
                 {model.page == EventAvailabilityPages.VIEW ?
                     <ViewCalendar data={model.event} calendar={model.calendar} />
                     : model.user ?
                         <EditCalendar data={model.event} updateCalendar={updateCalendar} model={model2} handleEvent={() => {}} user={model.user} calendar={model.calendar} />
-                        : <LoginForm setUser={setUser} />
+                        : <>
+                            <p className="text-lg mb-4">Log in to edit your availability</p>
+                            <LoginForm setUser={setUser} />
+                        </>
                 }
             </div>
 

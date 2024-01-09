@@ -40,7 +40,7 @@ export default function EventForm({model}: MVCInterface<CreateEventInterface, nu
             <Controller
                   name="timezone"
                   control={RHFController}
-                  render={({ field, formState }) => <TimezoneInput value={field.value} onChange={field.onChange} />}
+                  render={({ field, formState }) => <TimezoneInput value={field.value} onChange={field.onChange} fullWidth={true} />}
                   rules={{required: "Field is required"}}
               />
           </div>

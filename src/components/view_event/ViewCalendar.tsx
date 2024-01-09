@@ -28,7 +28,7 @@ export default function ViewCalendar({data, calendar} : props) {
         pct = Math.round(pct * 100) / 100
 
         if (!data.availability_by_time.has(datetime)) {
-            return <div className="h-full bg-slate-500" />
+            return <div className="h-full bg-gray-400" />
         }
         
         return (

@@ -5,10 +5,11 @@ import { TIMEZONE_OPTIONS } from "../../utils/dropdown_options";
 
 interface props {
     value: string,
-    onChange: (...event: any[]) => any
+    onChange: (...event: any[]) => any,
+    fullWidth?: boolean
 }
 
-export default forwardRef(function Timezone({value, onChange}: props, ref) {
+export default forwardRef(function Timezone({value, onChange, fullWidth=false}: props, ref) {
 
     return (
         <DropdownInput
@@ -17,6 +18,7 @@ export default forwardRef(function Timezone({value, onChange}: props, ref) {
             error={undefined}
             label={"Timezone"}
             options={TIMEZONE_OPTIONS}
+            width={fullWidth ? "100%" : 300}
         />
     )
 

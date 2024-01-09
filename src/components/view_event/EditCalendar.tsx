@@ -51,7 +51,7 @@ export default function EditCalendar({data, user, calendar, updateCalendar, hand
         const maxRow = Math.max(model.startRow, model.endRow)
 
         if (!data.availability_by_time.has(ms)) {
-            return <div className="h-full bg-slate-500" />
+            return <div className="h-full bg-gray-400" />
         }
 
         if (colNum >= minCol && colNum <= maxCol && rowNum >= minRow && rowNum <= maxRow) {

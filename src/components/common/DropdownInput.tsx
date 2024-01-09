@@ -7,7 +7,8 @@ import { InputProps } from '../../interfaces/interfaces';
 
 
 interface props<T> extends InputProps<T> {
-    options: Option<T>[]
+    options: Option<T>[],
+    width?: number | string
 }
 
 interface Option<T> {
@@ -16,7 +17,7 @@ interface Option<T> {
 }
 
 
-export default forwardRef(function DropdownInput<T extends (number | string)>({value, onChange, error, label, options}: props<T>, ref: Ref<HTMLInputElement>) {
+export default forwardRef(function DropdownInput<T extends (number | string)>({value, onChange, error, label, options, width="auto"}: props<T>, ref: Ref<HTMLInputElement>) {
 
     return (
         <div>
@@ -30,6 +31,7 @@ export default forwardRef(function DropdownInput<T extends (number | string)>({v
                     onChange={onChange}
                     inputRef={ref}
                     size="small"
+                    style={{backgroundColor: "white", width: width}}
                 >
                     {options.map(({val, display}) => <MenuItem value={val}>{display}</MenuItem>)}
                 </Select>
