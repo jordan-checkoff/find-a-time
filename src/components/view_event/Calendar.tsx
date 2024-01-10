@@ -35,8 +35,6 @@ export default function Calendar({Cell, data, calendar}: props) {
 
     const numCols = window.innerWidth > 1000 ? calendar.dates.length : Math.floor((window.innerWidth - 100) / 64)
 
-    console.log(calendar.get_breaks())
-
 
     return (
         <div className="pb-10 w-full" style={{userSelect: "none"}}>

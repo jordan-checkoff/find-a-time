@@ -1,8 +1,8 @@
-import EventAvailabilityController from "../components/view_event/EventAvailabilityController";
+import EventView from "../components/view_event/EventView";
 
 export default function ViewEvent() {
 
     return (
-        <EventAvailabilityController />
+        <EventView />
     )
 }

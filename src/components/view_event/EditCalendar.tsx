@@ -1,76 +1,117 @@
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import Event from "../../interfaces/Event";
-import Calendar from "./Calendar";
-import { Dayjs } from "dayjs";
-import { Checkbox } from "@mui/material";
-import MVCInterface from "../../interfaces/MVCInterface";
-import { EditCalendarActions, EditCalendarInterface } from "./EditCalendarController";
-import { Calendar as C } from "../../interfaces/Event";
+import { useState } from "react"
+import Event, { Calendar } from "../../interfaces/Event"
 
-interface props extends MVCInterface<EditCalendarInterface, EditCalendarActions> {
+interface props {
     data: Event,
+    calendar:  Calendar,
+    startCol: number,
+    endCol: number,
     user: string,
-    calendar: C,
-    updateCalendar: any
+    updateAvailability: (user: string, datetimes: number[], adding: boolean) => void
+
 }
 
-interface cellProps {
-    colNum: number,
-    rowNum: number
-}
+export default function EditCalendar({data, calendar, startCol, endCol, user, updateAvailability}: props) {
+
+    const [mouseDown, setMouseDown] = useState(false)
+    const [adding, setAdding] = useState(false)
+    const [start, setStart] = useState([-1, -1])
+    const [end, setEnd] = useState([-1, -1])
 
 
-
-export default function EditCalendar({data, user, calendar, updateCalendar, handleEvent, model} : props) {
+    const isChecked = (row: number, col: number) => {
+        if (row >= Math.min(start[0], end[0]) && row <= Math.max(start[0],end[0]) && col >= Math.min(start[1], end[1]) && col <= Math.max(start[1],end[1])) {
+            return adding
+        }
+        return !!data.availability_by_user.get(user)?.has(calendar.get_datetime(row, col))
+    }
 
     const handleMouseDown = (row: number, col: number) => {
-        updateCalendar(EditCalendarActions.MOUSE_DOWN, row, col)
+        setMouseDown(true)
+        setAdding(!data.availability_by_user.get(user)?.has(calendar.get_datetime(row, col)))
+        setStart([row, col])
+        setEnd([row, col])
     }
-    const handleMouseOver = (row: number, col: number) => {
-        if (model.mouseDown) {
-            updateCalendar(EditCalendarActions.MOUSE_ENTER, row, col)
+
+    const handleMouseMove = (row: number, col: number) => {
+        if (mouseDown) {
+            setEnd([row, col])
         }
     }
 
     const handleMouseUp = () => {
-        updateCalendar(EditCalendarActions.MOUSE_UP, 0, 0)
+        if (mouseDown) {
+            setMouseDown(false)
+            updateAvailability(user, calendar.get_datetimes(start[0], end[0], start[1], end[1]), adding)   
+        }
     }
 
-    document.onpointerup = handleMouseUp;
-
-
-    function EditCell({colNum, rowNum} : cellProps) {
-
-        const ms = calendar.get_datetime(rowNum, colNum)
-
-        let checked = data.availability_by_time.get(ms)?.has(user)
-
-        const minCol = Math.min(model.startCol, model.endCol)
-        const maxCol = Math.max(model.startCol, model.endCol)
-        const minRow = Math.min(model.startRow, model.endRow)
-        const maxRow = Math.max(model.startRow, model.endRow)
-
-        if (!data.availability_by_time.has(ms)) {
-            return <div className="h-full bg-gray-400" />
-        }
-
-        if (colNum >= minCol && colNum <= maxCol && rowNum >= minRow && rowNum <= maxRow) {
-            checked = model.adding
-        }
-
-        return (
-                <div
-                className={`flex justify-center h-full touch-pinch-zoom`}
-                style={checked ? {backgroundColor: "red"} : {}}
-                onPointerDown={() => handleMouseDown(rowNum, colNum)}
-                onPointerMove={(e) => handleMouseOver(rowNum, colNum)}
-                />
-        )
-    
-
-    }
+    document.onpointerup = handleMouseUp
 
     return (
-        <Calendar calendar={calendar} data={data} Cell={EditCell} />
+       <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(endCol-startCol, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
+            <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
+            {calendar.get_dates().slice(startCol, endCol).map((d, i) => <Column handleMouseMove={handleMouseMove} handleMouseDown={handleMouseDown} checked={isChecked} date={d} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + startCol} />)}    
+        </div>
+    )
+}
+
+
+
+
+interface ColumnProps {
+    colNum: number,
+    toptimes: string[],
+    bottomtimes: string[],
+    date: string,
+    checked: (row: number, col: number) => boolean,
+    handleMouseDown: (row: number, col: number) => void,
+    handleMouseMove: (row: number, col: number) => void,
+}
+
+
+function Column({colNum, date, toptimes, bottomtimes, checked, handleMouseDown, handleMouseMove}: ColumnProps) {
+
+    return (
+        <div>
+            <p>{date}</p>
+            {toptimes.map((t, i) => <Cell handleMouseMove={() => handleMouseMove(i, colNum)} handleMouseDown={() => handleMouseDown(i, colNum)} checked={checked(i, colNum)} />)}
+
+            {bottomtimes.map((t, i) => <Cell handleMouseMove={() => handleMouseMove(i, colNum)} handleMouseDown={() => handleMouseDown(i, colNum)} checked={checked(i, colNum)} />)}
+        </div>
+    )
+}
+
+interface cellProps {
+    checked: boolean
+    handleMouseDown: () => void
+    handleMouseMove: () => void
+}
+
+function Cell({checked, handleMouseDown, handleMouseMove}: cellProps) {
+
+    return (
+        <div className="h-6 border-2" onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} style={{backgroundColor: checked ? "red" : "white"}} />
+    )
+}
+
+
+
+interface TimeColProps {
+    toptimes: string[],
+    bottomtimes: string[],
+}
+
+function TimeCol({toptimes, bottomtimes}: TimeColProps) {
+
+    return (
+        <div>
+            <div>
+                {toptimes.map(x => <p>{x}</p>)}
+            </div>
+            <div>
+                {bottomtimes.map(x => <p>{x}</p>)}
+            </div>
+        </div>
     )
 }

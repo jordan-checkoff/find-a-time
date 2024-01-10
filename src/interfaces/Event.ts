@@ -61,8 +61,20 @@ export default class Event {
         }
     }
 
-    get_calendar() {
-        return new Calendar(this.start_times, this.num_blocks)
+    get_calendar(timezone: string) {
+        return new Calendar(this.start_times, this.num_blocks, timezone)
+    }
+
+    clone() {
+        const event = new Event()
+        event.id = this.id
+        event.title = this.title
+        event.start_times = this.start_times
+        event.num_blocks = this.num_blocks
+        event.availability_by_user = this.availability_by_user
+        event.availability_by_time = this.availability_by_time
+
+        return event
     }
 
 }
@@ -70,7 +82,6 @@ export default class Event {
 
 
 export class Calendar {
-    timezone: string = dayjs.tz.guess()
     start_times: Array<Dayjs> = []
     num_blocks: number = -1
 
@@ -78,18 +89,18 @@ export class Calendar {
     top_blocks: Dayjs[] = []
     bottom_blocks: Dayjs[] = []
 
-    constructor(start_times: Array<Dayjs>, num_blocks: number) {
+    constructor(start_times: Array<Dayjs>, num_blocks: number, timezone: string) {
         this.start_times = start_times
         this.num_blocks = num_blocks
-        this.create_calendar()
+        this.create_calendar(timezone)
     }
 
-    create_calendar() {
+    create_calendar(timezone: string) {
         this.dates = []
         this.top_blocks = []
         this.bottom_blocks = []
 
-        const start = dayjs(this.start_times[0]).tz(this.timezone).utcOffset() != 0 ? dayjs(this.start_times[0]).tz(this.timezone) : dayjs(this.start_times[0]).utc()
+        const start = dayjs(this.start_times[0]).tz(timezone).utcOffset() != 0 ? dayjs(this.start_times[0]).tz(timezone) : dayjs(this.start_times[0]).utc()
 
         for (let j=0; j < this.num_blocks; j++) {
             const datetime = start.add(30*j, "minute")
@@ -101,7 +112,7 @@ export class Calendar {
         }
 
         for (let i=0; i < this.start_times.length; i++) {
-            const start = this.start_times[i].tz(this.timezone).utcOffset() != 0 ? this.start_times[i].tz(this.timezone) : this.start_times[i].utc()
+            const start = this.start_times[i].tz(timezone).utcOffset() != 0 ? this.start_times[i].tz(timezone) : this.start_times[i].utc()
             if (this.top_blocks.length == 0) {
                 this.dates.push(start)
             } else {
@@ -112,11 +123,6 @@ export class Calendar {
             }
         }
 
-    }
-
-    update_timezone(timezone: string): void {
-        this.timezone = timezone
-        this.create_calendar()
     }
 
     get_dates() {

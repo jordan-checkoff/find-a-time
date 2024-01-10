@@ -1,4 +1,4 @@
-import EditCalendar from "./EditCalendar";
+import EditCalendar from "./EditCalendarNavigator";
 import Event from "../../interfaces/Event";
 import { ReducerAction } from "../../interfaces/interfaces";
 import { useReducer } from "react";

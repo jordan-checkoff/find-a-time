@@ -7,7 +7,7 @@ import { useState } from "react";
 interface props {
     data: Event,
     calendar: C,
-    onHover?: any
+    setSelected?: any
 }
 
 interface cellProps {
@@ -17,7 +17,7 @@ interface cellProps {
 
 
 
-export default function ViewCalendar({data, calendar, onHover} : props) {
+export default function ViewCalendar({data, calendar} : props) {
 
 
     function AvailabilityCell({rowNum, colNum} : cellProps) {
@@ -32,29 +32,31 @@ export default function ViewCalendar({data, calendar, onHover} : props) {
             return <div className="h-full bg-gray-400" />
         }
 
-        const handleClick = () => {
-            if (window.innerWidth < 1000 && users && users.size > 0) {
-                if (window.innerWidth < 1000) {
-                    setOpen(true)
-                } else {
-                    onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: Array.from(users)})
-                }
-            }   
-        }
+        // const handleClick = () => {
+        //     if (window.innerWidth < 1000 && users && users.size > 0) {
+        //         if (window.innerWidth < 1000) {
+        //             setOpen(true)
+        //         } else {
+        //             onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: Array.from(users)})
+        //         }
+        //     }   
+        // }
 
-        const handleHover = () => {
-            if (window.innerWidth >= 1000) {
-                if (users && users.size > 0) {
-                    onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: Array.from(users), percentage: `${users.size}/${data.availability_by_user.size}`})
-                } else {
-                    onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: null, percentage: `0/${data.availability_by_user.size}`})
-                }
-            }
-        }
+        // const handleHover = () => {
+        //     if (window.innerWidth >= 1000) {
+        //         if (users && users.size > 0) {
+        //             onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: Array.from(users), percentage: `${users.size}/${data.availability_by_user.size}`})
+        //         } else {
+        //             onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: null, percentage: `0/${data.availability_by_user.size}`})
+        //         }
+        //     }
+        // }
         
         return (
             <>
-                <div onClick={handleClick} onMouseEnter={handleHover} className={`h-full bg-red-500`} style={{opacity: pct}}>
+                {/* <div onClick={handleClick} onMouseEnter={handleHover} className={`h-full bg-red-500`} style={{opacity: pct}}> */}
+                <div  className={`h-full bg-red-500`} style={{opacity: pct}}>
+
                 </div>
                 {users && users.size > 0 &&
                                 <Drawer
@@ -84,7 +86,8 @@ export default function ViewCalendar({data, calendar, onHover} : props) {
     }
 
     return (
-        <div onMouseLeave={() => onHover(null)}>
+        // <div onMouseLeave={() => onHover(null)}>
+        <div>
             <Calendar Cell={AvailabilityCell} data={data} calendar={calendar} />
         </div>
     )
