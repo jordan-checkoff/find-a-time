@@ -4,7 +4,6 @@ import Calendar from "./Calendar";
 import { Dayjs } from "dayjs";
 import { Checkbox } from "@mui/material";
 import MVCInterface from "../../interfaces/MVCInterface";
-import { EditCalendarActions, EditCalendarInterface } from "./EditCalendarController";
 import { Calendar as C } from "../../interfaces/Event";
 import DragSelect from "dragselect";
 import Button from "../common/Button";
@@ -14,14 +13,29 @@ import LoginForm from "./LoginForm";
 interface props {
     data: Event,
     calendar: C,
-    updateAvailability: (user: string, datetimes: number[], adding: boolean) => void
+    updateAvailability: (user: string, datetimes: number[], adding: boolean) => void,
+    numCols: number,
+    start: number,
+    setStart: any,
+    user: string,
+    setUser: any,
+    selected: any
 }
 
 
-export default function EditCalendarNavigator({data, calendar, updateAvailability} : props) {
-    const [start, setStart] = useState(0)
-    const [user, setUser] = useState("")
+export default function EditCalendarNavigator({data, calendar, selected, updateAvailability, numCols, start, setStart, user, setUser} : props) {
 
+    if (selected) {
+        return (
+            <div>
+                <p>{selected.date}</p>
+                <p>{selected.num}/{selected.total}</p>
+                {selected.users && Array.from(selected.users).map((u) => {
+                    return <p>{u as string}</p>
+                })}
+            </div>
+        )
+    }
 
     if (user) {
         if (window.innerWidth > 1000) {
@@ -32,11 +46,9 @@ export default function EditCalendarNavigator({data, calendar, updateAvailabilit
                 </>
             )
         } else {
-            const numCols = window.innerWidth > 1000 ? calendar.dates.length : Math.floor((window.innerWidth - 100) / 64)
-
             return (
                 <>
-                    <div className="pb-10 w-full">
+                    <div className="p-5 w-full">
                         <div className="grid grid-cols-2 gap-2 mb-4">
                             <Button onClick={() => setStart(start - 1)} text="<" disabled={start == 0} />
                             <Button onClick={() => setStart(start + 1)} text=">" disabled={start + numCols >= calendar.dates.length} />

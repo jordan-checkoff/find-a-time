@@ -7,7 +7,6 @@ import ViewCalendar from "./ViewCalendar";
 import LoginForm from "./LoginForm";
 import EditCalendarNavigator from "./EditCalendarNavigator";
 import dayjs, { Dayjs } from "dayjs";
-import EditCalendarController, { EditCalendarActions } from "./EditCalendarController";
 import TimezoneInput from "../common/TimezoneInput";
 import Button from "../common/Button";
 import { useEffect, useState } from "react";
@@ -27,6 +26,8 @@ export default function EventView() {
     const [timezone, setTimezone] = useState<string>(dayjs.tz.guess())
     const [copied, setCopied] = useState(false)
     const [page, setPage] = useState(0)
+    const [start, setStart] = useState(0)
+    const [user, setUser] = useState("")
     const [selected, setSelected] = useState(null)
 
     const { id } = useParams()
@@ -58,16 +59,14 @@ export default function EventView() {
         }
     }
 
-    useEffect(() => {
-        console.log('EVENT')
-    }, [event])
-
     if (!event) {
         return <p>Loading...</p>
     }
 
 
     const calendar = event.get_calendar(timezone)
+    const numCols = window.innerWidth > 1000 ? calendar.dates.length : Math.floor((window.innerWidth - 100) / 64)
+
 
     if (window.innerWidth > 1000) {
         return (
@@ -84,11 +83,11 @@ export default function EventView() {
                  </div>
                 <div className="p-8 grid grid-cols-2 gap-4">
                     <div>
-                        <EditCalendarNavigator data={event} calendar={calendar} updateAvailability={updateAvailability} />
+                        <EditCalendarNavigator selected={selected} user={user} setUser={setUser} setStart={setStart} data={event} calendar={calendar} updateAvailability={updateAvailability} start={start} numCols={numCols} />
                     </div>
                     <div>
                         <p className="mb-8 text-xl font-bold">View Group's Availability</p>
-                        <ViewCalendar data={event} calendar={calendar} setSelected={setSelected} />
+                        <ViewCalendar setStart={setStart} start={start} numCols={numCols} data={event} calendar={calendar} setSelected={setSelected} />
                     </div>
                 </div>
             </>
@@ -119,8 +118,8 @@ export default function EventView() {
             <div className="p-4">
 
                 {page == EventAvailabilityPages.VIEW ?
-                    <ViewCalendar data={event} calendar={calendar} />
-                    : <EditCalendarNavigator data={event} calendar={calendar} updateAvailability={updateAvailability} />
+                    <ViewCalendar setStart={setStart} data={event} calendar={calendar} start={start} numCols={numCols} />
+                    : <EditCalendarNavigator selected={selected} user={user} setUser={setUser} setStart={setStart} start={start} numCols={numCols} data={event} calendar={calendar} updateAvailability={updateAvailability} />
                 }
             </div>
 

@@ -3,92 +3,136 @@ import Event, { Calendar as C } from "../../interfaces/Event";
 import Calendar from "./Calendar";
 import { Drawer } from "@mui/material";
 import { useState } from "react";
+import Button from "../common/Button";
 
 interface props {
     data: Event,
     calendar: C,
-    setSelected?: any
+    setSelected?: any,
+    start: number,
+    numCols: number,
+    setStart: any,
 }
 
-interface cellProps {
-    rowNum: number,
-    colNum: number
-}
 
 
+export default function ViewCalendar({data, calendar, start, numCols, setStart, setSelected} : props) {
 
-export default function ViewCalendar({data, calendar} : props) {
+    const weight = (rowNum: number, colNum: number) => {
+        const size = data.availability_by_time.get(calendar.get_datetime(rowNum, colNum))?.size
+        if (size) {
+            return Math.round(size / data.availability_by_user.size * 1000) / 1000
 
-
-    function AvailabilityCell({rowNum, colNum} : cellProps) {
-        const datetime = calendar.get_datetime(rowNum, colNum)
-        const users = data.availability_by_time.get(datetime)
-        const [open, setOpen] = useState(false)
-
-        let pct = users && users.size > 0 ? users.size / data.availability_by_user.size : 0
-        pct = Math.round(pct * 100) / 100
-
-        if (!data.availability_by_time.has(datetime)) {
-            return <div className="h-full bg-gray-400" />
+        } else {
+            return 0
         }
+    }
 
-        // const handleClick = () => {
-        //     if (window.innerWidth < 1000 && users && users.size > 0) {
-        //         if (window.innerWidth < 1000) {
-        //             setOpen(true)
-        //         } else {
-        //             onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: Array.from(users)})
-        //         }
-        //     }   
-        // }
-
-        // const handleHover = () => {
-        //     if (window.innerWidth >= 1000) {
-        //         if (users && users.size > 0) {
-        //             onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: Array.from(users), percentage: `${users.size}/${data.availability_by_user.size}`})
-        //         } else {
-        //             onHover({datetime: calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A"), people: null, percentage: `0/${data.availability_by_user.size}`})
-        //         }
-        //     }
-        // }
-        
-        return (
-            <>
-                {/* <div onClick={handleClick} onMouseEnter={handleHover} className={`h-full bg-red-500`} style={{opacity: pct}}> */}
-                <div  className={`h-full bg-red-500`} style={{opacity: pct}}>
-
-                </div>
-                {users && users.size > 0 &&
-                                <Drawer
-                                    open={open}
-                                    onClose={() => setOpen(false)}
-                                    anchor={"bottom"}
-                                    sx={{
-                                        '& .MuiDrawer-paper': {
-                                          maxHeight: '75%',
-                                        },
-                                      }}
-                                    
-                                >
-                                    <div className="p-10">
-                                        <p className="font-bold mb-2">{calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A")}</p>
-                                        <p>{`${users.size}/${data.availability_by_user.size} users available`}</p>
-                                        {Array.from(users).map(x => <p>{x}</p>)}
-                                    </div>
-                                </Drawer> 
-                                        
-                                
-            }
-            </>
-        )
-
-        return <p>A</p>
+    const getData = (rowNum: number, colNum: number) => {
+        const users = data.availability_by_time.get(calendar.get_datetime(rowNum, colNum))
+        const date = calendar.get_dayjs(rowNum, colNum).format("M/D/YY h:mm A")
+        const num = users?.size
+        const total = data.availability_by_user.size
+        return {users, date, num, total}
     }
 
     return (
-        // <div onMouseLeave={() => onHover(null)}>
+        <div className="pb-10 w-full" style={{userSelect: "none"}}>
+            {window.innerWidth <= 1000 && 
+                            <div className="p-5 w-full">
+                            <div className="grid grid-cols-2 gap-2 mb-4">
+                                <Button onClick={() => setStart(start - 1)} text="<" disabled={start == 0} />
+                                <Button onClick={() => setStart(start + 1)} text=">" disabled={start + numCols >= calendar.dates.length} />
+                            </div>
+                        </div>
+            }
+            <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(numCols, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
+                <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
+                {calendar.get_dates().slice(start, start+numCols).map((d, i) => <Column setSelected={setSelected} date={d} getData={getData} weight={weight} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + start} />)}    
+            </div>
+        </div>
+    )
+
+}
+
+
+interface ColumnProps {
+    colNum: number,
+    toptimes: string[],
+    bottomtimes: string[],
+    date: string,
+    getData: any,
+    weight: (row: number, col: number) => number,
+    setSelected: any
+}
+
+
+function Column({colNum, date, toptimes, bottomtimes, weight, getData, setSelected}: ColumnProps) {
+
+    return (
         <div>
-            <Calendar Cell={AvailabilityCell} data={data} calendar={calendar} />
+            <p>{date}</p>
+            {toptimes.map((t, i) => <Cell setSelected={setSelected} weight={weight(i, colNum)} data={getData(i, colNum)} />)}
+
+            {bottomtimes.map((t, i) => <Cell setSelected={setSelected} weight={weight(i, colNum)} data={getData(i, colNum)} />)}
+        </div>
+    )
+}
+
+
+
+interface cellProps {
+    weight: number,
+    data: any,
+    setSelected: any
+}
+
+function Cell({weight, data, setSelected}: cellProps) {
+    const [open, setOpen] = useState(false)
+
+    if (window.innerWidth > 1000) {
+        return (
+            <div className={`h-6 border-2`} onMouseEnter={() => setSelected(data)} onMouseLeave={() => setSelected(null)}>
+                <div style={{opacity: weight}} className={`h-full bg-red-500`}  />
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <Drawer open={open} anchor="bottom" onClose={() => setOpen(false)}>
+                <p>{data.date}</p>
+                <p>{data.num}/{data.total}</p>
+                {Array.from(data.users).map((u) => {
+                    return <p>{u as string}</p>
+                })}
+            </Drawer>
+            <div className={`h-6 border-2`} onClick={() => setOpen(true)}>
+                <div style={{opacity: weight}} className={`h-full bg-red-500`}  />
+            </div>
+        </>
+    ) 
+
+
+}
+
+
+
+interface TimeColProps {
+    toptimes: string[],
+    bottomtimes: string[],
+}
+
+function TimeCol({toptimes, bottomtimes}: TimeColProps) {
+
+    return (
+        <div>
+            <div>
+                {toptimes.map(x => <p>{x}</p>)}
+            </div>
+            <div>
+                {bottomtimes.map(x => <p>{x}</p>)}
+            </div>
         </div>
     )
 }

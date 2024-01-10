@@ -1,4 +1,4 @@
-import { EditCalendarInterface } from "../components/view_event/EditCalendarController"
+
 import Event, { Calendar } from "./Event"
 
 export enum EventAvailabilityPages {
