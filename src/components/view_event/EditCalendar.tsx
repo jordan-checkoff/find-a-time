@@ -18,6 +18,10 @@ export default function EditCalendar({data, calendar, startCol, endCol, user, up
     const [start, setStart] = useState([-1, -1])
     const [end, setEnd] = useState([-1, -1])
 
+    const exists = (row: number, col: number) => {
+        return data.availability_by_time.has(calendar.get_datetime(row, col))
+    }
+
 
     const isChecked = (row: number, col: number) => {
         if (row >= Math.min(start[0], end[0]) && row <= Math.max(start[0],end[0]) && col >= Math.min(start[1], end[1]) && col <= Math.max(start[1],end[1])) {
@@ -48,10 +52,12 @@ export default function EditCalendar({data, calendar, startCol, endCol, user, up
 
     document.onpointerup = handleMouseUp
 
+    const gaps = calendar.get_breaks()
+
     return (
        <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(endCol-startCol, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
             <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
-            {calendar.get_dates().slice(startCol, endCol).map((d, i) => <Column handleMouseMove={handleMouseMove} handleMouseDown={handleMouseDown} checked={isChecked} date={d} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + startCol} />)}    
+            {calendar.get_dates().slice(startCol, endCol).map((d, i) => <Column gap={gaps.has(i)} exists={exists} handleMouseMove={handleMouseMove} handleMouseDown={handleMouseDown} checked={isChecked} date={d} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + startCol} />)}    
         </div>
     )
 }
@@ -67,17 +73,22 @@ interface ColumnProps {
     checked: (row: number, col: number) => boolean,
     handleMouseDown: (row: number, col: number) => void,
     handleMouseMove: (row: number, col: number) => void,
+    exists: any,
+    gap: boolean
 }
 
 
-function Column({colNum, date, toptimes, bottomtimes, checked, handleMouseDown, handleMouseMove}: ColumnProps) {
+function Column({colNum, gap, date, exists, toptimes, bottomtimes, checked, handleMouseDown, handleMouseMove}: ColumnProps) {
 
     return (
-        <div>
+        <div style={{marginRight: gap ? 10 : 0}}>
             <p>{date}</p>
-            {toptimes.map((t, i) => <Cell handleMouseMove={() => handleMouseMove(i, colNum)} handleMouseDown={() => handleMouseDown(i, colNum)} checked={checked(i, colNum)} />)}
-
-            {bottomtimes.map((t, i) => <Cell handleMouseMove={() => handleMouseMove(i, colNum)} handleMouseDown={() => handleMouseDown(i, colNum)} checked={checked(i, colNum)} />)}
+            {toptimes.length > 0 && 
+                <div className="mb-4">
+                    {toptimes.map((t, i) => <Cell exists={exists(i, colNum)} handleMouseMove={() => handleMouseMove(i, colNum)} handleMouseDown={() => handleMouseDown(i, colNum)} checked={checked(i, colNum)} />)}
+                </div>
+            }
+            {bottomtimes.map((t, i) => <Cell exists={exists(i + toptimes.length, colNum)} handleMouseMove={() => handleMouseMove(i + toptimes.length, colNum)} handleMouseDown={() => handleMouseDown(i + toptimes.length, colNum)} checked={checked(i + toptimes.length, colNum)} />)}
         </div>
     )
 }
@@ -86,9 +97,14 @@ interface cellProps {
     checked: boolean
     handleMouseDown: () => void
     handleMouseMove: () => void
+    exists: boolean
 }
 
-function Cell({checked, handleMouseDown, handleMouseMove}: cellProps) {
+function Cell({exists, checked, handleMouseDown, handleMouseMove}: cellProps) {
+
+    if (!exists) {
+        return <div className="h-6 border-2 bg-gray-400" />
+    }
 
     return (
         <div className="h-6 border-2" onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} style={{backgroundColor: checked ? "red" : "white"}} />
@@ -106,9 +122,12 @@ function TimeCol({toptimes, bottomtimes}: TimeColProps) {
 
     return (
         <div>
-            <div>
-                {toptimes.map(x => <p>{x}</p>)}
-            </div>
+            <div className="mb-4" />
+            {toptimes.length > 0 && 
+                <div className="mb-4">
+                    {toptimes.map(x => <p>{x}</p>)}
+                </div>
+            }
             <div>
                 {bottomtimes.map(x => <p>{x}</p>)}
             </div>

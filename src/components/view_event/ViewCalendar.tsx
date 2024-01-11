@@ -36,6 +36,8 @@ export default function ViewCalendar({data, calendar, start, numCols, setStart, 
         return {users, date, num, total}
     }
 
+    const gaps = calendar.get_breaks()
+
     return (
         <div className="pb-10 w-full" style={{userSelect: "none"}}>
             {window.innerWidth <= 1000 && 
@@ -48,7 +50,7 @@ export default function ViewCalendar({data, calendar, start, numCols, setStart, 
             }
             <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(numCols, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
                 <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
-                {calendar.get_dates().slice(start, start+numCols).map((d, i) => <Column setSelected={setSelected} date={d} getData={getData} weight={weight} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + start} />)}    
+                {calendar.get_dates().slice(start, start+numCols).map((d, i) => <Column gap={gaps.has(i)} setSelected={setSelected} date={d} getData={getData} weight={weight} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + start} />)}    
             </div>
         </div>
     )
@@ -63,18 +65,23 @@ interface ColumnProps {
     date: string,
     getData: any,
     weight: (row: number, col: number) => number,
-    setSelected: any
+    setSelected: any,
+    gap: boolean
 }
 
 
-function Column({colNum, date, toptimes, bottomtimes, weight, getData, setSelected}: ColumnProps) {
+function Column({colNum, gap, date, toptimes, bottomtimes, weight, getData, setSelected}: ColumnProps) {
 
     return (
-        <div>
+        <div style={{marginRight: gap ? 10 : 0}}>
             <p>{date}</p>
-            {toptimes.map((t, i) => <Cell setSelected={setSelected} weight={weight(i, colNum)} data={getData(i, colNum)} />)}
+            {toptimes.length > 0 && 
+                <div className="mb-4">
+                    {toptimes.map((t, i) => <Cell setSelected={setSelected} weight={weight(i, colNum)} data={getData(i, colNum)} />)}
+                </div>
+            }
 
-            {bottomtimes.map((t, i) => <Cell setSelected={setSelected} weight={weight(i, colNum)} data={getData(i, colNum)} />)}
+            {bottomtimes.map((t, i) => <Cell setSelected={setSelected} weight={weight(i+ toptimes.length, colNum)} data={getData(i + toptimes.length, colNum)} />)}
         </div>
     )
 }
@@ -127,9 +134,12 @@ function TimeCol({toptimes, bottomtimes}: TimeColProps) {
 
     return (
         <div>
-            <div>
-                {toptimes.map(x => <p>{x}</p>)}
-            </div>
+            <div className="mb-4" />
+            {toptimes.length > 0 && 
+                <div className="mb-4">
+                    {toptimes.map(x => <p>{x}</p>)}
+                </div>
+            }
             <div>
                 {bottomtimes.map(x => <p>{x}</p>)}
             </div>

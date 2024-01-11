@@ -45,8 +45,10 @@ export default class Event {
 
         if (adding) {
             datetimes.forEach(x => {
-                this.availability_by_user.get(user)?.add(x)
-                this.availability_by_time.get(x)?.add(user)
+                if (this.availability_by_time.has(x)) {
+                    this.availability_by_user.get(user)?.add(x)
+                    this.availability_by_time.get(x)?.add(user)
+                }
             })
         } else {
             datetimes.forEach(x => {
@@ -116,7 +118,7 @@ export class Calendar {
             if (this.top_blocks.length == 0) {
                 this.dates.push(start)
             } else {
-                if (i == 0 || this.dates[this.dates.length-1] != start) {
+                if (i == 0 || !this.dates[this.dates.length-1].isSame(start, "day")) {
                     this.dates.push(start)
                 }
                 this.dates.push(start.add(1, "day"))
