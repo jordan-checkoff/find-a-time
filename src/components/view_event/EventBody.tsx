@@ -4,34 +4,18 @@ import ViewCalendar from "./ViewCalendar"
 import EditCalendarNavigator from "./EditCalendarNavigator"
 import { useState } from "react"
 import { EventAvailabilityPages } from "../../interfaces/EventAvailabilityInterface"
-import Event from "../../interfaces/Event"
-import { useEvent, useEventUpdate } from "./EventContext"
+import { useEvent } from "./EventContext"
 
 
-interface props {
-    timezone: string
-}
-
-export default function EventBody({timezone}: props) {
+export default function EventBody() {
 
     const [page, setPage] = useState(0)
     const [start, setStart] = useState(0)
-    const [user, setUser] = useState("")
     const [selected, setSelected] = useState(null)
 
-    const event = useEvent()
-    const updateEvent = useEventUpdate()
 
-    const updateAvailability = (user: string, datetimes: number[], adding: boolean) => {
-        if (event) {
-            const newEvent = event.clone()
-            newEvent.update_availability(datetimes, adding, user)
-            updateEvent(newEvent)
-        }
-    }
-
-    const calendar = event.get_calendar(timezone)
-    const numCols = window.innerWidth > 768 ? calendar.dates.length : Math.floor((window.innerWidth - 100) / 64)
+    const {calendar} = useEvent()
+    const numCols = calendar.get_num_cols()
 
     if (window.innerWidth < 768) {
         return (
@@ -50,8 +34,8 @@ export default function EventBody({timezone}: props) {
 
                 <div className="p-4">
                     {page == EventAvailabilityPages.VIEW ?
-                        <ViewCalendar data={event} calendar={calendar} start={start} numCols={numCols} />
-                        : <EditCalendarNavigator selected={selected} user={user} setUser={setUser} start={start} numCols={numCols} data={event} calendar={calendar} updateAvailability={updateAvailability} />
+                        <ViewCalendar start={start} />
+                        : <EditCalendarNavigator selected={selected} start={start} />
                     }
                 </div>
             </>
@@ -60,8 +44,8 @@ export default function EventBody({timezone}: props) {
 
     return (
         <div className="p-4 p-8 md:grid grid-cols-2 gap-4 hidden">
-            <EditCalendarNavigator selected={selected} user={user} setUser={setUser} data={event} calendar={calendar} updateAvailability={updateAvailability} start={start} numCols={numCols} />
-            <ViewCalendar start={start} numCols={numCols} data={event} calendar={calendar} setSelected={setSelected} />
+            <EditCalendarNavigator selected={selected} start={start} />
+            <ViewCalendar start={start} setSelected={setSelected} />
         </div>
     )
 }

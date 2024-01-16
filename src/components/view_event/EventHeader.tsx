@@ -3,16 +3,12 @@ import TimezoneInput from "../common/TimezoneInput"
 import Button from "../common/Button"
 import { useEvent } from "./EventContext"
 
-interface props {
-    timezone: string,
-    setTimezone: Dispatch<SetStateAction<string>>
-}
 
-export default function EventHeader({timezone, setTimezone}: props) {
+export default function EventHeader() {
 
     const [copied, setCopied] = useState(false)
 
-    const event = useEvent()
+    const {event, timezone, setTimezone} = useEvent()
 
     const addToClipboard = () => {
         window.navigator.clipboard.writeText(window.location.href);

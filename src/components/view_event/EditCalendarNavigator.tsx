@@ -1,27 +1,22 @@
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Event from "../../interfaces/Event";
-import { Dayjs } from "dayjs";
-import { Checkbox } from "@mui/material";
-import MVCInterface from "../../interfaces/MVCInterface";
 import { Calendar as C } from "../../interfaces/Event";
-import DragSelect from "dragselect";
-import Button from "../common/Button";
 import EditCalendar from "./EditCalendar";
 import LoginForm from "./LoginForm";
+import { useEvent } from "./EventContext";
 
 interface props {
-    data: Event,
-    calendar: C,
-    updateAvailability: (user: string, datetimes: number[], adding: boolean) => void,
-    numCols: number,
     start: number,
-    user: string,
-    setUser: any,
     selected: any
 }
 
 
-export default function EditCalendarNavigator({data, calendar, selected, updateAvailability, numCols, start, user, setUser} : props) {
+export default function EditCalendarNavigator({selected, start} : props) {
+
+    const { event, timezone, calendar } = useEvent()
+    const numCols = calendar.get_num_cols()
+
+    const [user, setUser] = useState("")
 
     if (selected) {
         return (
@@ -38,25 +33,18 @@ export default function EditCalendarNavigator({data, calendar, selected, updateA
     }
 
     if (user) {
-        if (window.innerWidth > 1000) {
+        if (window.innerWidth > 786) {
             return (
-                <div>
-                    <EditCalendar user={user} data={data} calendar={calendar} startCol={0} endCol={calendar.dates.length} updateAvailability={updateAvailability} />
-                </div>
+                <EditCalendar user={user} data={event} calendar={calendar} startCol={0} endCol={calendar.dates.length} />
             )
         } else {
             return (
-                <div>
-                    <EditCalendar user={user} data={data} calendar={calendar} startCol={start} endCol={start+numCols} updateAvailability={updateAvailability} />
-                </div >
+                <EditCalendar user={user} data={event} calendar={calendar} startCol={start} endCol={start+numCols} />
             )
         }
     } else {
         return (
-            <div className="px-12">
-                <p className="text-lg mb-4">Log in to edit your availability</p>
-                <LoginForm setUser={setUser} />
-            </div>
+            <LoginForm setUser={setUser} />
         )
     }
 

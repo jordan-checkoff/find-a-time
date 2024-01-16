@@ -180,4 +180,8 @@ export class Calendar {
         return breaks
     }
 
+    get_num_cols() {
+        return window.innerWidth > 768 ? this.dates.length : Math.floor((window.innerWidth - 100) / 64)
+    }
+
 }

@@ -25,7 +25,9 @@ export default function LoginForm({setUser}: props) {
 
     return (
         <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <p className="mb-2 text-xl font-bold">Edit Your Availability</p>
+            <p className="mb-4">Log in to edit your availability</p>
+            <form onSubmit={handleSubmit(onSubmit)} className="px-12">
                 <div className="mb-8">
                     <Controller
                         name="user"

@@ -1,5 +1,7 @@
 import { useState } from "react"
 import Event, { Calendar } from "../../interfaces/Event"
+import { useEvent } from "./EventContext"
+import TimeColumn from "./TimeColumn"
 
 interface props {
     data: Event,
@@ -7,16 +9,18 @@ interface props {
     startCol: number,
     endCol: number,
     user: string,
-    updateAvailability: (user: string, datetimes: number[], adding: boolean) => void
 
 }
 
-export default function EditCalendar({data, calendar, startCol, endCol, user, updateAvailability}: props) {
+export default function EditCalendar({data, calendar, startCol, endCol, user}: props) {
 
     const [mouseDown, setMouseDown] = useState(false)
     const [adding, setAdding] = useState(false)
     const [start, setStart] = useState([-1, -1])
     const [end, setEnd] = useState([-1, -1])
+
+    
+    const { updateAvailability } = useEvent()
 
     const exists = (row: number, col: number) => {
         return data.availability_by_time.has(calendar.get_datetime(row, col))
@@ -46,7 +50,7 @@ export default function EditCalendar({data, calendar, startCol, endCol, user, up
     const handleMouseUp = () => {
         if (mouseDown) {
             setMouseDown(false)
-            updateAvailability(user, calendar.get_datetimes(start[0], end[0], start[1], end[1]), adding)   
+            updateAvailability(calendar.get_datetimes(start[0], end[0], start[1], end[1]), adding, user)   
         }
     }
 
@@ -55,14 +59,14 @@ export default function EditCalendar({data, calendar, startCol, endCol, user, up
     const gaps = calendar.get_breaks()
 
     return (
-        <>
+        <div>
             <p className="mb-2 text-xl font-bold">Edit Your Availability</p>
             <p className="mb-8">Drag to select the times when you are available.</p>
-            <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(endCol-startCol, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
-                <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
+            <div className="pb-10 w-full overflow-x-scroll flex" style={{userSelect: "none"}}>
+                <TimeColumn />
                 {calendar.get_dates().slice(startCol, endCol).map((d, i) => <Column gap={gaps.has(i)} exists={exists} handleMouseMove={handleMouseMove} handleMouseDown={handleMouseDown} checked={isChecked} date={d} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + startCol} />)}    
             </div>
-        </>
+        </div>
 
     )
 }
@@ -86,8 +90,8 @@ interface ColumnProps {
 function Column({colNum, gap, date, exists, toptimes, bottomtimes, checked, handleMouseDown, handleMouseMove}: ColumnProps) {
 
     return (
-        <div style={{marginRight: gap ? 10 : 0}}>
-            <p>{date}</p>
+        <div className="w-20" style={{marginRight: gap ? 10 : 0}}>
+            <p className="text-center mb-2 text-xs">{date}</p>
             {toptimes.length > 0 && 
                 <div className="mb-4">
                     {toptimes.map((t, i) => <Cell exists={exists(i, colNum)} handleMouseMove={() => handleMouseMove(i, colNum)} handleMouseDown={() => handleMouseDown(i, colNum)} checked={checked(i, colNum)} />)}
@@ -113,29 +117,5 @@ function Cell({exists, checked, handleMouseDown, handleMouseMove}: cellProps) {
 
     return (
         <div className="h-6 border-2" onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} style={{backgroundColor: checked ? "red" : "white"}} />
-    )
-}
-
-
-
-interface TimeColProps {
-    toptimes: string[],
-    bottomtimes: string[],
-}
-
-function TimeCol({toptimes, bottomtimes}: TimeColProps) {
-
-    return (
-        <div>
-            <div className="mb-4" />
-            {toptimes.length > 0 && 
-                <div className="mb-4">
-                    {bottomtimes.map(x => x && <p className="mb-6">{x}</p>)}
-                </div>
-            }
-            <div>
-                {bottomtimes.map(x => x && <p className="mb-6">{x}</p>)}
-            </div>
-        </div>
     )
 }
