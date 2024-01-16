@@ -55,10 +55,15 @@ export default function EditCalendar({data, calendar, startCol, endCol, user, up
     const gaps = calendar.get_breaks()
 
     return (
-       <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(endCol-startCol, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
-            <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
-            {calendar.get_dates().slice(startCol, endCol).map((d, i) => <Column gap={gaps.has(i)} exists={exists} handleMouseMove={handleMouseMove} handleMouseDown={handleMouseDown} checked={isChecked} date={d} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + startCol} />)}    
-        </div>
+        <>
+            <p className="mb-2 text-xl font-bold">Edit Your Availability</p>
+            <p className="mb-8">Drag to select the times when you are available.</p>
+            <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(endCol-startCol, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
+                <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
+                {calendar.get_dates().slice(startCol, endCol).map((d, i) => <Column gap={gaps.has(i)} exists={exists} handleMouseMove={handleMouseMove} handleMouseDown={handleMouseDown} checked={isChecked} date={d} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + startCol} />)}    
+            </div>
+        </>
+
     )
 }
 
@@ -125,11 +130,11 @@ function TimeCol({toptimes, bottomtimes}: TimeColProps) {
             <div className="mb-4" />
             {toptimes.length > 0 && 
                 <div className="mb-4">
-                    {toptimes.map(x => <p>{x}</p>)}
+                    {bottomtimes.map(x => x && <p className="mb-6">{x}</p>)}
                 </div>
             }
             <div>
-                {bottomtimes.map(x => <p>{x}</p>)}
+                {bottomtimes.map(x => x && <p className="mb-6">{x}</p>)}
             </div>
         </div>
     )

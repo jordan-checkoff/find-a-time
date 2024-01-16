@@ -132,11 +132,11 @@ export class Calendar {
     }
 
     get_top_blocks() {
-        return this.top_blocks.map((t) => t.format("h:mm A"))
+        return this.top_blocks.map((t, i) => i % 2 == 0 ? t.format("h:mm A") : "")
     }
 
     get_bottom_blocks() {
-        return this.bottom_blocks.map((t) => t.format("h:mm A"))
+        return this.bottom_blocks.map((t, i) => i % 2 == 0 ? t.format("h:mm A") : "")
     }
 
     get_dayjs(row: number, col: number) {

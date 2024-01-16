@@ -1,6 +1,5 @@
 import { Dayjs } from "dayjs";
 import Event, { Calendar as C } from "../../interfaces/Event";
-import Calendar from "./Calendar";
 import { Drawer } from "@mui/material";
 import { useState } from "react";
 import Button from "../common/Button";
@@ -11,12 +10,11 @@ interface props {
     setSelected?: any,
     start: number,
     numCols: number,
-    setStart: any,
 }
 
 
 
-export default function ViewCalendar({data, calendar, start, numCols, setStart, setSelected} : props) {
+export default function ViewCalendar({data, calendar, start, numCols, setSelected} : props) {
 
     const weight = (rowNum: number, colNum: number) => {
         const size = data.availability_by_time.get(calendar.get_datetime(rowNum, colNum))?.size
@@ -39,20 +37,17 @@ export default function ViewCalendar({data, calendar, start, numCols, setStart, 
     const gaps = calendar.get_breaks()
 
     return (
-        <div className="pb-10 w-full" style={{userSelect: "none"}}>
-            {window.innerWidth <= 1000 && 
-                            <div className="p-5 w-full">
-                            <div className="grid grid-cols-2 gap-2 mb-4">
-                                <Button onClick={() => setStart(start - 1)} text="<" disabled={start == 0} />
-                                <Button onClick={() => setStart(start + 1)} text=">" disabled={start + numCols >= calendar.dates.length} />
-                            </div>
-                        </div>
-            }
-            <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(numCols, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
-                <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
-                {calendar.get_dates().slice(start, start+numCols).map((d, i) => <Column gap={gaps.has(i)} setSelected={setSelected} date={d} getData={getData} weight={weight} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + start} />)}    
+        <div>
+            <p className="mb-2 text-xl font-bold">View Group's Availability</p>
+            <p className="mb-8">{window.innerWidth > 1000 ? "Hover" : "Click"} to see who's available at a given time.</p>
+            <div className="pb-10 w-full" style={{userSelect: "none"}}>
+                <div style={{display: "grid", gridTemplateColumns: `80px repeat(${Math.min(numCols, calendar.dates.length)}, 4rem)`}} className="overflow-x-scroll">
+                    <TimeCol toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} />
+                    {calendar.get_dates().slice(start, start+numCols).map((d, i) => <Column gap={gaps.has(i)} setSelected={setSelected} date={d} getData={getData} weight={weight} toptimes={calendar.get_top_blocks()} bottomtimes={calendar.get_bottom_blocks()} colNum={i + start} />)}    
+                </div>
             </div>
         </div>
+
     )
 
 }
@@ -137,11 +132,11 @@ function TimeCol({toptimes, bottomtimes}: TimeColProps) {
             <div className="mb-4" />
             {toptimes.length > 0 && 
                 <div className="mb-4">
-                    {toptimes.map(x => <p>{x}</p>)}
+                    {bottomtimes.map(x => x && <p className="mb-6">{x}</p>)}
                 </div>
             }
             <div>
-                {bottomtimes.map(x => <p>{x}</p>)}
+                {bottomtimes.map(x => x && <p className="mb-6">{x}</p>)}
             </div>
         </div>
     )

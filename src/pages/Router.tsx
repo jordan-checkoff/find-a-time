@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreateEvent from './CreateEvent';
-import ViewEvent from "./ViewEvent";
+import ViewEventPage from "./ViewEventPage";
 
 
 const router = createBrowserRouter([
@@ -10,7 +10,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/event/:id",
-    element: <ViewEvent />
+    element: <ViewEventPage />
   }
 ]);
 
