@@ -5,6 +5,7 @@ import EditCalendar from "./EditCalendar";
 import LoginForm from "./LoginForm";
 import { useEvent } from "./EventContext";
 import AvailabilityDetails from "./AvailabilityDetails";
+import { useScreenWidth } from "../../contexts/ScreenWidthContext";
 
 interface props {
     start: number,
@@ -19,7 +20,8 @@ export default function EditCalendarNavigator({selected, start, user, setUser, s
 
     const { event, timezone, calendar } = useEvent()
     const numCols = calendar.get_num_cols()
-
+    const width = useScreenWidth()
+    
     if (selected) {
         return (
             <div>
@@ -31,7 +33,7 @@ export default function EditCalendarNavigator({selected, start, user, setUser, s
     }
 
     if (user) {
-        if (window.innerWidth > 786) {
+        if (width > 786) {
             return (
                 <EditCalendar user={user} setStart={setStart} data={event} calendar={calendar} startCol={0} endCol={calendar.dates.length} />
             )

@@ -4,6 +4,7 @@ import { useEvent } from "./EventContext";
 import TimeColumn from "./TimeColumn";
 import Calendar from "./Calendar";
 import AvailabilityDetails from "./AvailabilityDetails";
+import { useScreenWidth } from "../../contexts/ScreenWidthContext";
 
 interface props {
     setSelected?: any,
@@ -18,9 +19,10 @@ export default function ViewCalendar({start, setSelected, setStart} : props) {
     const {event, calendar} = useEvent()
     const [clicked, setClicked] = useState<any>({date: null, total: null, num: null, users: []})
     const [c, setC] = useState([-1, -1])
+    const width = useScreenWidth()
 
     const select = (val: any, val2: any) => {
-        if (window.innerWidth > 786) {
+        if (width > 786) {
             setSelected(val)
             setC(val2)
         } else {

@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { useEvent } from "./EventContext";
 import NavButtons from "./NavButtons";
 import TimeColumn from "./TimeColumn";
+import { useScreenWidth } from "../../contexts/ScreenWidthContext";
 
 interface props {
     title: string,
@@ -18,13 +19,14 @@ export default function Calendar({title, subtitle, start, Cell, setStart} : prop
     const { calendar } = useEvent()
     const numCols = calendar.get_num_cols()
     const gaps = calendar.get_breaks()
+    const width = useScreenWidth()
 
     return (
         <div>
             <p className="mb-2 text-xl font-bold">{title}</p>
             <p className="mb-6">{subtitle}</p>
 
-            {window.innerWidth < 768 && <NavButtons start={start} setStart={setStart} />} 
+            {width < 768 && <NavButtons start={start} setStart={setStart} />} 
             <div className="pb-10 w-full overflow-x-scroll flex select-none">
                 <TimeColumn />
                 {calendar.get_dates().slice(start, start+numCols).map((d, i) => <Column colNum={i + start} date={d} gap={gaps.has(i + start)} bottomtimes={calendar.get_bottom_blocks()} toptimes={calendar.get_top_blocks()} Cell={Cell} />)}    

@@ -6,6 +6,7 @@ import { useState } from "react"
 import { EventAvailabilityPages } from "../../interfaces/EventAvailabilityInterface"
 import { useEvent } from "./EventContext"
 import NavButtons from "./NavButtons"
+import { useScreenWidth } from "../../contexts/ScreenWidthContext"
 
 
 export default function EventBody() {
@@ -18,8 +19,9 @@ export default function EventBody() {
 
     const {calendar} = useEvent()
     const numCols = calendar.get_num_cols()
+    const width = useScreenWidth()
 
-    if (window.innerWidth < 768) {
+    if (width < 768) {
         return (
             <>
                 <Tabs value={page} onChange={(e, x) => setPage(x)} style={{borderTop: "1px solid lightgray"}} variant="fullWidth" TabIndicatorProps={{style: {background:'red', height: 3}}}>
