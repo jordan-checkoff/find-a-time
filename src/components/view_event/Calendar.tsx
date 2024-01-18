@@ -53,15 +53,15 @@ function Column({gap, date, toptimes, bottomtimes, colNum, Cell}: ColumnProps) {
     }
 
     return (
-        <div className="w-20" style={{marginRight: gap ? 10 : 0}}>
+        <div className="w-16" style={{marginRight: gap ? 10 : 0}}>
             <p className="text-center mb-2 text-xs">{date}</p>
             {toptimes.length > 0 && 
-                <div className="mb-4">
-                    {toptimes.map((t, i) => <div className="h-6 cursor-pointer"><Cell row={i} col={colNum} /></div>)}
+                <div className="mb-4 w-20">
+                    {toptimes.map((t, i) => <div className="h-6 w-16 cursor-pointer"><Cell row={i} col={colNum} /></div>)}
                 </div>
             }
 
-            {bottomtimes.map((t, i) => <div className="h-6 cursor-pointer"><Cell row={i + toptimes.length} col={colNum} /></div>)}
+            {bottomtimes.map((t, i) => <div className="h-6 w-16 cursor-pointer"><Cell row={i + toptimes.length} col={colNum} /></div>)}
         </div>
     )
 }
