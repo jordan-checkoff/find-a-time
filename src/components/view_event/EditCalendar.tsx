@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import Event, { Calendar as C } from "../../interfaces/Event"
 import { useEvent } from "./EventContext"
 import Calendar from "./Calendar"
@@ -9,10 +9,11 @@ interface props {
     startCol: number,
     endCol: number,
     user: string,
+    setStart: Dispatch<SetStateAction<number>>
 
 }
 
-export default function EditCalendar({data, calendar, startCol, endCol, user}: props) {
+export default function EditCalendar({data, calendar, startCol, setStart, user}: props) {
 
     const [clicked, setClicked] = useState([-1, -1])
 
@@ -32,9 +33,10 @@ export default function EditCalendar({data, calendar, startCol, endCol, user}: p
     return (
         <Calendar
             title="Edit Your Availability"
-            subtitle="Drag to select the times when you are available."
+            subtitle="Select two times to add/remove all times within that time range."
             start={startCol}
             Cell={EditCell(user, clicked, handleClick)}
+            setStart={setStart}
         />
     )
 }

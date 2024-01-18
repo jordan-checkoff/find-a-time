@@ -5,6 +5,7 @@ import EditCalendarNavigator from "./EditCalendarNavigator"
 import { useState } from "react"
 import { EventAvailabilityPages } from "../../interfaces/EventAvailabilityInterface"
 import { useEvent } from "./EventContext"
+import NavButtons from "./NavButtons"
 
 
 export default function EventBody() {
@@ -12,6 +13,7 @@ export default function EventBody() {
     const [page, setPage] = useState(0)
     const [start, setStart] = useState(0)
     const [selected, setSelected] = useState(null)
+    const [user, setUser] = useState("")
 
 
     const {calendar} = useEvent()
@@ -25,17 +27,10 @@ export default function EventBody() {
                     <Tab label="Edit Availability" value={EventAvailabilityPages.EDIT} style={{ color: 'black', backgroundColor: "#EEE" }} />
                 </Tabs>
 
-                <div className="p-5 w-full">
-                    <div className="grid grid-cols-2 gap-2 mb-4">
-                        <Button onClick={() => setStart(start - 1)} text="<" disabled={start == 0} />
-                        <Button onClick={() => setStart(start + 1)} text=">" disabled={start + numCols >= calendar.dates.length} />
-                    </div>
-                </div>
-
                 <div className="p-4">
                     {page == EventAvailabilityPages.VIEW ?
-                        <ViewCalendar start={start} />
-                        : <EditCalendarNavigator selected={selected} start={start} />
+                        <ViewCalendar start={start} setStart={setStart} />
+                        : <EditCalendarNavigator setStart={setStart} user={user} setUser={setUser} selected={selected} start={start} />
                     }
                 </div>
             </>
@@ -44,8 +39,8 @@ export default function EventBody() {
 
     return (
         <div className="p-4 p-8 md:grid grid-cols-2 gap-4 hidden">
-            <EditCalendarNavigator selected={selected} start={start} />
-            <ViewCalendar start={start} setSelected={setSelected} />
+            <EditCalendarNavigator setStart={setStart} user={user} setUser={setUser} selected={selected} start={start} />
+            <ViewCalendar start={start} setStart={setStart} setSelected={setSelected} />
         </div>
     )
 }

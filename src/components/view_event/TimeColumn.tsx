@@ -8,7 +8,7 @@ export default function TimeColumn() {
     const bottomtimes = calendar.get_bottom_blocks()
 
     return (
-        <div className="text-nowrap text-right mr-2">
+        <div className="text-nowrap text-right mr-2 w-16">
             <div className="mb-5" />
                 {toptimes.length > 0 && 
                     <div className="mb-10">
