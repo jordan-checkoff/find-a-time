@@ -14,54 +14,19 @@ interface props {
 
 export default function EditCalendar({data, calendar, startCol, endCol, user}: props) {
 
-    const [mouseDown, setMouseDown] = useState(false)
-    const [adding, setAdding] = useState(false)
-    const [start, setStart] = useState([-1, -1])
-    const [end, setEnd] = useState([-1, -1])
+    const [clicked, setClicked] = useState([-1, -1])
 
     
     const { updateAvailability } = useEvent()
 
-    const isChecked = (row: number, col: number) => {
-        if (row >= Math.min(start[0], end[0]) && row <= Math.max(start[0],end[0]) && col >= Math.min(start[1], end[1]) && col <= Math.max(start[1],end[1])) {
-            return adding
-        }
-        return !!data.availability_by_user.get(user)?.has(calendar.get_datetime(row, col))
-    }
-
-    const weight = (row: number, col: number) => {
-        if (isChecked(row, col)) {
-            return 1
+    const handleClick = (row: number, col: number) => {
+        if (clicked[0] == -1) {
+            setClicked([row, col])
         } else {
-            return 0
+            updateAvailability(calendar.get_datetimes(row, clicked[0], col, clicked[1]), !data.availability_by_user.get(user)?.has(calendar.get_datetime(clicked[0], clicked[1])), user)
+            setClicked([-1, -1])
         }
     }
-
-    const handleMouseDown = (row: number, col: number) => {
-        return () => {
-            setMouseDown(true)
-            setAdding(!data.availability_by_user.get(user)?.has(calendar.get_datetime(row, col)))
-            setStart([row, col])
-            setEnd([row, col])
-        }
-    }
-
-    const handleMouseMove = (row: number, col: number) => {
-        if (mouseDown) {
-            return () => setEnd([row, col])
-        } else {
-            return () => {}
-        }
-    }
-
-    const handleMouseUp = () => {
-        if (mouseDown) {
-            setMouseDown(false)
-            updateAvailability(calendar.get_datetimes(start[0], end[0], start[1], end[1]), adding, user)   
-        }
-    }
-
-    document.onpointerup = handleMouseUp
 
 
     return (
@@ -69,9 +34,27 @@ export default function EditCalendar({data, calendar, startCol, endCol, user}: p
             title="Edit Your Availability"
             subtitle="Drag to select the times when you are available."
             start={startCol}
-            weight={weight}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
+            Cell={EditCell(user, clicked, handleClick)}
         />
     )
+}
+
+
+function EditCell(user: string, clicked: any, handleClick: any) {
+
+    const {event, calendar} = useEvent()
+
+    return ({row, col}: any) => {
+
+        const red = !!event.availability_by_user.get(user)?.has(calendar.get_datetime(row, col))
+
+        if (!event.availability_by_time.has(calendar.get_datetime(row, col))) {
+            return <div className="h-full border-2 bg-gray-400" />
+        }
+
+        return (
+            <div className="h-full border-2" style={{backgroundColor: red ? "red" : undefined, borderColor: clicked[0] == row && clicked[1] == col ? "yellow" : "#EEE"}} onClick={() => handleClick(row, col)} />
+        )
+
+    }
 }

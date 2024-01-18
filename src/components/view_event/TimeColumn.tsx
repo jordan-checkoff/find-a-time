@@ -9,14 +9,14 @@ export default function TimeColumn() {
 
     return (
         <div className="text-nowrap text-right mr-2">
-            <div className="mb-6" />
+            <div className="mb-5" />
                 {toptimes.length > 0 && 
-                    <div className="mb-3">
-                        {bottomtimes.map(x => x && <p className="mb-6 text-xs">{x}</p>)}
+                    <div className="mb-10">
+                        {toptimes.map(x => x && <p className="h-6 mb-6 text-xs">{x}</p>)}
                     </div>
                 }
             <div>
-                {bottomtimes.map(x => x && <p className="mb-6 text-xs">{x}</p>)}
+                {bottomtimes.map(x => x && <p className="h-6 mb-6 text-xs">{x}</p>)}
             </div>
         </div>
     )

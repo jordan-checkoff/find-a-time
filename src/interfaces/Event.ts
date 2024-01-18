@@ -135,6 +135,10 @@ export class Calendar {
         return this.top_blocks.map((t, i) => i % 2 == 0 ? t.format("h:mm A") : "")
     }
 
+    get_top_times() {
+        return this.top_blocks.map((t, i) => i % 2 == 0 ? t.format("h:mm A") : "")
+    }
+
     get_bottom_blocks() {
         return this.bottom_blocks.map((t, i) => i % 2 == 0 ? t.format("h:mm A") : "")
     }
