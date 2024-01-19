@@ -53,7 +53,7 @@ export default function EditCalendar({data, startCol, setStart, user}: props) {
     return (
         <Calendar
             title="Edit Your Availability"
-            subtitle="Select two times to add/remove all times within that time range."
+            subtitle="Drag to select the times that you're available."
             start={startCol}
             Cell={EditCell(user, handlePointerDown, handlePointerMove, begin, end, adding)}
             setStart={setStart}

@@ -39,7 +39,7 @@ export default function ViewCalendar({start, setSelected, setStart} : props) {
         <div onMouseLeave={handleMouseLeave}>
             <Calendar
                 title="View Group's Availability"
-                subtitle={"Click to see who's available at a given time."}
+                subtitle={`${width < 768 ? "Click" : "Hover"} to see who's available at a given time.`}
                 start={start}
                 Cell={ViewCell(select)}
                 setStart={setStart}
