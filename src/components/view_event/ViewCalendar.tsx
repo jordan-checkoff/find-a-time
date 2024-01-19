@@ -16,15 +16,13 @@ interface props {
 
 export default function ViewCalendar({start, setSelected, setStart} : props) {
 
-    const {event, calendar} = useEvent()
+    const [mouseDown, setMouseDown] = useState(false)
     const [clicked, setClicked] = useState<any>({date: null, total: null, num: null, users: []})
-    const [c, setC] = useState([-1, -1])
     const width = useScreenWidth()
 
     const select = (val: any, val2: any) => {
         if (width > 786) {
             setSelected(val)
-            setC(val2)
         } else {
             setClicked(val)
         }
@@ -33,9 +31,9 @@ export default function ViewCalendar({start, setSelected, setStart} : props) {
     const handleMouseLeave = () => {
         if (setSelected) {
             setSelected(null);
-            setC([-1, -1])
         }
     }
+
 
     return (
         <div onMouseLeave={handleMouseLeave}>
@@ -43,7 +41,7 @@ export default function ViewCalendar({start, setSelected, setStart} : props) {
                 title="View Group's Availability"
                 subtitle={"Click to see who's available at a given time."}
                 start={start}
-                Cell={ViewCell(select, c)}
+                Cell={ViewCell(select)}
                 setStart={setStart}
             />
 
@@ -60,7 +58,7 @@ export default function ViewCalendar({start, setSelected, setStart} : props) {
 }
 
 
-function ViewCell(setSelected: any, c: any) {
+function ViewCell(setSelected: any) {
 
     const {event, calendar} = useEvent()
 
@@ -80,7 +78,7 @@ function ViewCell(setSelected: any, c: any) {
         const handleClick = () => {
             setSelected((x: any) => {
                 if (x && x.date && x.date.isSame(data.date)) {
-                    return null
+                    return x
                 } else {
                     return data
                 }
@@ -98,7 +96,7 @@ function ViewCell(setSelected: any, c: any) {
         }
 
         return (
-            <div className="h-full border-2" style={{borderColor: c[0] == row && c[1] == col ? "yellow" : "#EEE"}} onClick={handleClick}>
+            <div className="h-full border-2 touch-none" onPointerMove={handleClick} onClick={handleClick}>
                 <div className="h-full bg-red-500" style={{opacity: weight}} />
             </div>
         )
