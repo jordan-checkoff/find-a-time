@@ -6,7 +6,7 @@ const ScreenWidthContext = createContext(0)
 
 export default function ScreenWidthProvider({children}: any) {
 
-    const [screenWidth, setScreenWidth] = useState(0)
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth)
 
     const handleResize = () => {
         setScreenWidth(window.innerWidth)
