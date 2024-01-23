@@ -9,7 +9,7 @@ export default function TimeColumn() {
 
     return (
         <div className="text-nowrap text-right mr-2 w-16">
-            <div className="mb-5" />
+            <div className="mb-8" />
                 {toptimes.length > 0 && 
                     <div className="mb-10">
                         {toptimes.map(x => x && <p className="h-6 mb-6 text-xs">{x}</p>)}

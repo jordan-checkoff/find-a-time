@@ -128,7 +128,9 @@ export class Calendar {
     }
 
     get_dates() {
-        return this.dates.map((d) => d.format("M/D/YY"))
+        return this.dates.map((d) => {
+            return {day: d.format("ddd"), date: d.format("M/D")}
+        })
     }
 
     get_top_blocks() {

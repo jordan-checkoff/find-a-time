@@ -29,7 +29,7 @@ export default function Calendar({title, subtitle, start, Cell, setStart} : prop
             {width < 768 && <NavButtons start={start} setStart={setStart} />} 
             <div className="pb-10 w-full overflow-x-scroll flex select-none">
                 <TimeColumn />
-                {calendar.get_dates().slice(start, start+numCols).map((d, i) => <Column colNum={i + start} date={d} gap={gaps.has(i + start)} bottomtimes={calendar.get_bottom_blocks()} toptimes={calendar.get_top_blocks()} Cell={Cell} />)}    
+                {calendar.get_dates().slice(start, start+numCols).map((d, i) => <Column colNum={i + start} date={d.date} day={d.day} gap={gaps.has(i + start)} bottomtimes={calendar.get_bottom_blocks()} toptimes={calendar.get_top_blocks()} Cell={Cell} />)}    
             </div>
         </div>
 
@@ -43,20 +43,17 @@ interface ColumnProps {
     date: string,
     toptimes: string[],
     bottomtimes: string[],
-    colNum: number
+    colNum: number,
+    day: string
 }
 
-function Column({gap, date, toptimes, bottomtimes, colNum, Cell}: ColumnProps) {
+function Column({gap, date, toptimes, day, bottomtimes, colNum, Cell}: ColumnProps) {
 
-    const { event, calendar } = useEvent()
-
-    const exists = (row: number, col: number) => {
-        return event.availability_by_time.has(calendar.get_datetime(row, col))
-    }
 
     return (
         <div className="w-16" style={{marginRight: gap ? 10 : 0}}>
-            <p className="text-center mb-2 text-xs">{date}</p>
+            <p className="text-center text-xs">{date}</p>
+            <p className="text-center">{day}</p>
             {toptimes.length > 0 && 
                 <div className="mb-4 w-20">
                     {toptimes.map((t, i) => <div className="h-6 w-16 cursor-pointer"><Cell row={i} col={colNum} /></div>)}
